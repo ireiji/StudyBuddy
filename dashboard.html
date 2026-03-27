@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Study Buddy — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #0d0f14;
+            color: #e8eaf0;
+            display: flex;
+            height: 100dvh;
+        }
+
+        .main {
+            
+        }
+
+        .topbar {
+            height: 64px;
+            background: #13161e;
+            border-bottom: 1px solid #222636;
+            display: flex; align-items: center;
+            padding: 0 24px; gap: 16px; flex-shrink: 0;
+            width: 100vw;
+        
+        }
+        .page-title { 
+            font-family: 'Syne', sans-serif; 
+            font-weight: 700; 
+            font-size: 18px; 
+            color: #e8eaf0;
+        }
+
+        .content {
+            flex: 1; overflow-y: auto; padding: 32px 28px;
+            scrollbar-width: thin; scrollbar-color: #222636 transparent;
+        }
+
+        .greeting { 
+            margin-bottom: 32px; 
+        }
+
+        .greeting h1 { 
+            font-family: 'Syne', sans-serif; 
+            font-size: clamp(22px, 3vw, 30px); 
+            font-weight: 800; 
+            letter-spacing: -.4px; 
+        }
+
+        .greeting p  { 
+            color: #636882; 
+            margin-top: 4px; 
+            font-size: 14.5px; 
+        }
+
+        @media (max-width: 768px) {
+            .content { 
+                padding: 20px 16px; 
+            }
+            .topbar  { 
+                padding: 0 16px; 
+            }
+        }
+
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 16px; 
+            margin-bottom: 28px; 
+        }
+        .stat-card { 
+            background: #13161e; 
+            border: 1px solid #222636; 
+            border-radius: 14px; 
+            padding: 20px; 
+            transition: border-color .2s, transform .2s; 
+        }
+        .stat-card:hover { 
+            border-color: #6c8ef4; 
+            transform: translateY(-2px); 
+        }
+        .stat-icon  { 
+            font-size: 22px; 
+            margin-bottom: 14px; 
+        }
+        .stat-value { 
+            font-family: 'Syne', 
+            sans-serif; 
+            font-size: 28px; 
+            font-weight: 800; 
+            letter-spacing: -.5px; 
+        }
+        .stat-label { 
+            color: #636882; 
+            font-size: 12.5px; 
+            margin-top: 4px; 
+        }
+        .two-col { 
+            display: grid; 
+            grid-template-columns: 1fr 50vw; 
+            gap: 20px; 
+        }
+        @media (max-width: 900px) { 
+            .two-col { 
+                grid-template-columns: 1fr; 
+            } 
+        }
+         .card { 
+            background: #13161e; 
+            border: 1px solid #222636; 
+            border-radius: 14px; 
+            padding: 22px; 
+        }
+        .card-title { 
+            font-family: 'Syne', sans-serif; 
+            font-weight: 700; 
+            font-size: 15px; 
+            margin-bottom: 18px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        .see-all { 
+            font-family: 'DM Sans', sans-serif; 
+            font-size: 12px; 
+            color: #6c8ef4; 
+            font-weight: 400; 
+            cursor: pointer; 
+        }
+        .task-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 10px 0; 
+            border-bottom: 1px solid #222636; 
+        }
+        .task-item:last-child { 
+            border-bottom: none; 
+        }
+        .task-check {
+            width: 18px; height: 18px; border-radius: 5px;
+            border: 2px solid #222636; flex-shrink: 0; cursor: pointer;
+            display: grid; place-items: center;
+            transition: border-color .2s, background .2s;
+        }
+        .task-check.done { 
+            background: #6c8ef4; 
+            border-color: #6c8ef4; 
+        }
+        .task-check.done::after { 
+            content: '✓'; 
+            font-size: 11px; 
+            color: #fff; 
+        }
+        .task-text { 
+            font-size: 13.5px; 
+            flex: 1; 
+        }
+    </style>
+<body>
+    <div class="main">
+        <div class="topbar">
+            <span class="page-title">Dashboard</span>
+        </div>
+
+        <div class="content">
+            <div class="greeting">
+                <h1 id="greet">Good [time], [user] 👋</h1>
+                <p id="greetsub">Here are your tasks for today.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
+                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">3,842</div><div class="stat-label">Tasks finished</div></div>
+                <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value">127</div><div class="stat-label">Tasks unfinished</div></div>
+                <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value">14</div><div class="stat-label">Deadlines this week</div></div>
+            </div>
+
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-title">Today's Tasks <span class="see-all">Add new +</span></div>
+                    <div class="task-item"><div class="task-check" onclick="toggleTask(this)"></div><span class="task-text">Task name</span></div>
+                </div>
+
+                <div class="card">
+
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const supabaseUrl = "https://wfsnvttpktwwelsjghqf.supabase.co"
+        const supabaseKey = "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
+
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        const user = JSON.parse(localStorage.getItem("user"))
+
+        if (!user) {
+            window.location.href = "login.html"
+        }
+
+        function getTime() {
+            const hour = new Date().getHours();
+
+            if (hour < 12) {
+                return "morning";
+            } else if (hour < 17) {
+                return "afternoon";
+            } else if (hour < 24) {
+                return "evening";
+            }
+        }
+        
+        function getName() {
+            return user.username;
+        }
+
+        document.getElementById("greet").textContent = "Good " + getTime() + ", " + getName() + " 👋";
+        document.getElementById("greetsub").textContent = "Here are your tasks for this " + getTime() + ".";
+
+        const partnername = document.getElementById("partnername")
+        const partnerstatus = document.getElementById("partnerstatus")
+
+        async function updatePartnerStatus() {
+            const { data: users, error } = await supabase
+                .from('users')
+                .select('username, role, online')
+                .neq('role', user.role)
+
+            if (error) {
+                console.log("Error fetching partner:", error)
+                return
+            }
+
+            if (users && users.length > 0) {
+                const partner = users[0]
+
+                partnername.innerText = partner.username;
+                if(partner.online) {
+                    partnerstatus.innerText = "online";
+                    partnerstatus.style.color = "#4ade80";
+                } else {
+                    partnerstatus.innerText = "offline";
+                    partnerstatus.style.color = "#f87171";
+                }
+            }
+        }
+
+        updatePartnerStatus()
+        setInterval(updatePartnerStatus, 3000)
+    </script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Buddy — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #13161e;
+      --border: #222636;
+      --accent: #6c8ef4;
+      --accent2: #a78bfa;
+      --text: #e8eaf0;
+      --muted: #636882;
+      --danger: #f87171;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: .35;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, #6c8ef4 0%, transparent 70%);
+      top: -160px; left: -120px;
+      animation-duration: 14s;
+    }
+    .orb-2 {
+      width: 460px; height: 460px;
+      background: radial-gradient(circle, #a78bfa 0%, transparent 70%);
+      bottom: -140px; right: -100px;
+      animation-duration: 10s;
+      animation-delay: -4s;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #4f6ef7 0%, transparent 70%);
+      top: 50%; left: 55%;
+      opacity: .18;
+      animation-duration: 16s;
+      animation-delay: -7s;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.06); }
+    }
+
+    .bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(108,142,244,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,142,244,.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(19, 22, 30, 0.55);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 44px 40px 40px;
+      box-shadow:
+        0 0 0 1px rgba(108,142,244,.08),
+        0 32px 64px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      animation: rise .6s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(28px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-size: 18px;
+      box-shadow: 0 4px 16px rgba(108,142,244,.35);
+    }
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -.3px;
+      background: linear-gradient(135deg, #fff 40%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .heading { margin-bottom: 28px; }
+    .heading h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: -.4px;
+      line-height: 1.2;
+    }
+    .heading p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .form { display: flex; flex-direction: column; gap: 18px; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: .01em;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 16px;
+      color: var(--muted);
+      pointer-events: none;
+      transition: color .2s;
+    }
+    input {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 12px;
+      padding: 13px 14px 13px 42px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      outline: none;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+    }
+    input::placeholder { color: var(--muted); }
+    input:focus {
+      border-color: rgba(108,142,244,.5);
+      background: rgba(108,142,244,.06);
+      box-shadow: 0 0 0 3px rgba(108,142,244,.12);
+    }
+    input:focus + .input-icon,
+    .input-wrap:focus-within .input-icon { color: var(--accent); }
+
+    .pw-toggle {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 16px;
+      padding: 0;
+      line-height: 1;
+      transition: color .2s;
+    }
+    .pw-toggle:hover { color: var(--text); }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: -4px;
+    }
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .remember input[type="checkbox"] { display: none; }
+    .check-box {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255,255,255,.15);
+      border-radius: 5px;
+      display: grid; place-items: center;
+      transition: border-color .2s, background .2s;
+      flex-shrink: 0;
+    }
+    .remember input:checked ~ .check-box {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .remember input:checked ~ .check-box::after {
+      content: '✓';
+      font-size: 10px;
+      color: #fff;
+      font-weight: 700;
+    }
+    .remember span { font-size: 13px; color: var(--muted); }
+
+    .forgot {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .forgot:hover { color: var(--accent2); }
+
+    .btn-submit {
+      margin-top: 4px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .01em;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(108,142,244,.35);
+    }
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .btn-submit:hover { opacity: .92; box-shadow: 0 6px 28px rgba(108,142,244,.45); }
+    .btn-submit:hover::before { opacity: 1; }
+    .btn-submit:active { transform: scale(.98); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 6px 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,.07);
+    }
+    .divider span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .btn-social:hover {
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.15);
+    }
+    .btn-social svg { flex-shrink: 0; }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    .footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .footer a:hover { color: var(--accent2); }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+    .shake { animation: shake .4s ease; }
+    .field-error input { border-color: rgba(248,113,113,.5) !important; box-shadow: 0 0 0 3px rgba(248,113,113,.1) !important; }
+    .err-msg { font-size: 12px; color: var(--danger); margin-top: -4px; display: none; }
+    .field-error .err-msg { display: block; }
+
+       .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+      z-index: 100;
+    }
+
+    .popup.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .popup-content {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 25px 30px;
+      max-width: 300px;
+      width: 90%;
+      text-align: center;
+      color: white;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      animation: popupFade 0.3s ease;
+    }
+
+    .popup-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .popup-content button {
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.3);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .popup-content button:hover {
+      background: rgba(255,255,255,0.5);
+    }
+
+    /* Fade animation */
+    @keyframes popupFade {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Page -->
+<div class="page">
+  <div class="card" id="card">
+
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      <span class="logo-text">Study Buddy</span>
+    </div>
+
+    <!-- Heading -->
+    <div class="heading">
+      <h1>Welcome back</h1>
+      <p>Sign in to your account to continue</p>
+    </div>
+
+    <!-- Form -->
+    <div class="form" id="loginForm">
+
+      <div class="field" id="fieldEmail">
+        <label for="username">Username</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉</span>
+          <input type="text" id="username" placeholder="username" required/>
+        </div>
+        <span class="err-msg">Please enter a valid username.</span>
+      </div>
+
+      <div class="field" id="fieldPw">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+          <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password">👁</button>
+        </div>
+        <span class="err-msg">Password must be at least 8 characters.</span>
+      </div>
+
+      <button class="btn-submit" onclick="login()">Sign in</button>
+
+      <div id="popup" class="popup">
+        <div class="popup-content">
+          <p>❌ Login failed. Check your username or password.</p>
+          <button class="closePopup" id="closePopup">OK</button>
+        </div>
+      </div>
+    </div>
+    </div>
+</div>
+
+<script type="module">
+  // Password visibility toggle
+  const pwInput  = document.getElementById('password');
+  const pwToggle = document.getElementById('pwToggle');
+  let pwVisible  = false;
+
+  pwToggle.addEventListener('click', () => {
+    pwVisible = !pwVisible;
+    pwInput.type = pwVisible ? 'text' : 'password';
+    pwToggle.textContent = pwVisible ? '⊘' : '👁';
+  });
+
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabaseUrl = "https://wfsnvttpktwwelsjghqf.supabase.co"
+    const supabaseKey = "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    function showPopup() {
+      popup.classList.add("show");
+
+      setTimeout(() => {
+        popup.classList.remove("show");
+      }, 3000);
+    }
+
+    closePopup.addEventListener("click", () => {
+      popup.classList.remove("show");
+    });
+
+    window.login = async () => {
+      const username = document.getElementById("username").value.trim()
+      const password = document.getElementById("password").value.trim()
+
+      if (!username || !password) {
+        alert("Please enter username and password")
+        return
+      }
+
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("username", username)
+        .eq("password", password)
+        .single()
+
+      if (error || !data) {
+        showPopup()
+        return
+      }
+
+      localStorage.setItem("user", JSON.stringify(data))
+
+      const { error: updateError, data: updateData } = await supabase
+        .from('users')
+        .update({ online: true })
+        .eq('username', data.username)
+
+      console.log("Update error:", updateError)
+      console.log("Update data:", updateData)
+
+      window.location.href = "dashboard.html"
+    }
+</script>
+</body>
+</html>
