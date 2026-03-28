@@ -203,8 +203,18 @@
       padding: 0;
       line-height: 1;
       transition: color .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .pw-toggle:hover { color: var(--text); }
+    .pw-toggle svg,
+    .input-icon svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+    .input-icon svg { width: 15px; height: 15px; }
 
     .row {
       display: flex;
@@ -336,65 +346,63 @@
     .err-msg { font-size: 12px; color: var(--danger); margin-top: -4px; display: none; }
     .field-error .err-msg { display: block; }
 
-       .popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0);
+    .auth-banner {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.3s ease;
-      z-index: 100;
-    }
-
-    .popup.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .popup-content {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 25px 30px;
-      max-width: 300px;
-      width: 90%;
-      text-align: center;
-      color: white;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      animation: popupFade 0.3s ease;
-    }
-
-    .popup-content p {
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
-
-    .popup-content button {
-      padding: 10px 20px;
+      align-items: flex-start;
+      gap: 11px;
+      background: rgba(248, 113, 113, .08);
+      border: 1px solid rgba(248, 113, 113, .28);
       border-radius: 12px;
+      padding: 13px 15px;
+      margin-bottom: 4px;
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
+      transition: max-height .4s cubic-bezier(.4,0,.2,1),
+                  opacity .35s ease,
+                  padding .35s ease,
+                  margin .35s ease;
+    }
+    .auth-banner.show {
+      max-height: 80px;
+      opacity: 1;
+      padding: 13px 15px;
+      margin-bottom: 4px;
+    }
+    .banner-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      filter: drop-shadow(0 0 6px rgba(248,113,113,.6));
+    }
+    .banner-body { flex: 1; }
+    .banner-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #fca5a5;
+      line-height: 1.2;
+    }
+    .banner-sub {
+      font-size: 12px;
+      color: rgba(252,165,165,.65);
+      margin-top: 2px;
+    }
+    .banner-close {
+      background: none;
       border: none;
-      background: rgba(255,255,255,0.3);
-      color: white;
       cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
+      color: rgba(252,165,165,.5);
+      font-size: 16px;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: color .2s;
     }
-
-    .popup-content button:hover {
-      background: rgba(255,255,255,0.5);
-    }
-
-    /* Fade animation */
-    @keyframes popupFade {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .banner-close:hover { 
+      color: #fca5a5; 
     }
   </style>
 </head>
@@ -425,6 +433,15 @@
     <!-- Form -->
     <div class="form" id="loginForm">
 
+      <div class="auth-banner" id="authBanner">
+        <span class="banner-icon">⚠</span>
+        <div class="banner-body">
+          <div class="banner-title">Invalid username or password</div>
+          <div class="banner-sub">Please check your credentials and try again.</div>
+        </div>
+        <button type="button" class="banner-close" id="bannerClose" aria-label="Dismiss">✕</button>
+      </div>
+
       <div class="field" id="fieldEmail">
         <label for="username">Username</label>
         <div class="input-wrap">
@@ -437,21 +454,25 @@
       <div class="field" id="fieldPw">
         <label for="password">Password</label>
         <div class="input-wrap">
-          <span class="input-icon">🔒</span>
+          <span class="input-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
           <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
-          <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password">👁</button>
+          <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password">
+            <svg id="pwIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
         </div>
         <span class="err-msg">Password must be at least 8 characters.</span>
       </div>
 
       <button class="btn-submit" onclick="login()">Sign in</button>
 
-      <div id="popup" class="popup">
-        <div class="popup-content">
-          <p>❌ Login failed. Check your username or password.</p>
-          <button class="closePopup" id="closePopup">OK</button>
-        </div>
-      </div>
     </div>
     </div>
 </div>
@@ -462,10 +483,30 @@
   const pwToggle = document.getElementById('pwToggle');
   let pwVisible  = false;
 
+  const eyeIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  `;
+
+  const eyeSlashIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M17.94 17.94C16.22 19.22 14.2 20 12 20c-7 0-11-8-11-8a17.35 17.35 0 0 1 3.56-5.44"></path>
+      <path d="M9.88 9.88a3 3 0 0 0 4.24 4.24"></path>
+      <path d="M14.12 14.12c1.2-.7 2.16-1.85 2.72-3.23"></path>
+      <path d="M1 1l22 22"></path>
+    </svg>
+  `;
+
+  pwToggle.innerHTML = eyeIcon;
+  pwToggle.setAttribute('aria-label', 'Show password');
+
   pwToggle.addEventListener('click', () => {
     pwVisible = !pwVisible;
     pwInput.type = pwVisible ? 'text' : 'password';
-    pwToggle.textContent = pwVisible ? '⊘' : '👁';
+    pwToggle.innerHTML = pwVisible ? eyeSlashIcon : eyeIcon;
+    pwToggle.setAttribute('aria-label', pwVisible ? 'Hide password' : 'Show password');
   });
 
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
@@ -475,17 +516,19 @@
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    function showPopup() {
-      popup.classList.add("show");
+    const authBanner  = document.getElementById('authBanner');
+    const bannerClose = document.getElementById('bannerClose');
 
-      setTimeout(() => {
-        popup.classList.remove("show");
-      }, 3000);
+    function showBanner() {
+      authBanner.classList.add('show');
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
     }
-
-    closePopup.addEventListener("click", () => {
-      popup.classList.remove("show");
-    });
+    function hideBanner() {
+      authBanner.classList.remove('show');
+    }
+    bannerClose.addEventListener('click', hideBanner);
 
     window.login = async () => {
       const username = document.getElementById("username").value.trim()
@@ -504,10 +547,9 @@
         .single()
 
       if (error || !data) {
-        showPopup()
+        showBanner()
         return
       }
-
       localStorage.setItem("user", JSON.stringify(data))
 
       const { error: updateError, data: updateData } = await supabase
