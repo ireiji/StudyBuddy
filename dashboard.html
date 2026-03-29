@@ -389,9 +389,9 @@
 
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
-                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">3,842</div><div class="stat-label">Tasks finished this week</div></div>
-                <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">127</div><div class="stat-label">Tasks unfinished</div></div>
-                <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">14</div><div class="stat-label">Deadlines this week</div></div>
+                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">0</div><div class="stat-label">Tasks finished this week</div></div>
+                <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">0</div><div class="stat-label">Tasks unfinished</div></div>
+                <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">0 </div><div class="stat-label">Deadlines this week</div></div>
             </div>
 
             <div class="two-col">
@@ -480,7 +480,7 @@
         async function updatePartnerStatus() {
             const { data: users, error } = await supabase
                 .from('users')
-                .select('username, role, online')
+                .select('username, role, last_seen')
                 .neq('role', user.role)
 
             if (error) {
@@ -492,7 +492,10 @@
                 const partner = users[0]
 
                 partnername.innerText = partner.username;
-                if(partner.online) {
+
+                const online = isOnline(partner.last_seen);
+
+                if (online) {
                     partnerstatus.innerText = "online";
                     partnerstatus.style.color = "#4ade80";
                 } else {
@@ -801,30 +804,26 @@
             if (e.key === 'Escape') closePanel();
         });
 
-        function sendOffline() {
+        setInterval(() => {
             fetch(`https://wfsnvttpktwwelsjghqf.supabase.co/rest/v1/users?id=eq.${user.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                     "apikey": "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
                 },
-                body: JSON.stringify({ online: false }),
-                keepalive: true
-            })
+                body: JSON.stringify({
+                    last_seen: new Date().toISOString(),
+                    online: true
+                })
+            });
+        }, 10000); // every 10 seconds
+
+        function isOnline(lastSeen) {
+            const now = new Date();
+            const last = new Date(lastSeen);
+
+            return (now - last) < 30000; // 30 seconds
         }
-
-        // iOS + modern browsers
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "hidden") {
-                sendOffline();
-            }
-        });
-
-        // iOS Safari
-        window.addEventListener("pagehide", sendOffline);
-
-        // Desktop fallback
-        window.addEventListener("beforeunload", sendOffline);
     </script>
 </body>
 </html>
