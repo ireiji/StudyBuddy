@@ -389,9 +389,9 @@
 
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
-                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">3,842</div><div class="stat-label">Tasks finished this week</div></div>
-                <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value">127</div><div class="stat-label">Tasks unfinished</div></div>
-                <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value">14</div><div class="stat-label">Deadlines this week</div></div>
+                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">3,842</div><div class="stat-label">Tasks finished this week</div></div>
+                <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">127</div><div class="stat-label">Tasks unfinished</div></div>
+                <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">14</div><div class="stat-label">Deadlines this week</div></div>
             </div>
 
             <div class="two-col">
@@ -516,6 +516,7 @@
         updatePartnerStatus()
         updateOnlineStatus()
         loadTasks()
+        loadStats()
         setInterval(updatePartnerStatus, 3000)
         setInterval(updateOnlineStatus, 3000)
 
@@ -576,6 +577,8 @@
                 .from("tasks")
                 .update({ [field]: isDone })
                 .eq("id", id);
+
+            loadStats();
         }
 
         async function loadTasks() {
@@ -623,6 +626,73 @@
                 addNewButton.addEventListener('click', () => openPanel());
             }
 
+        }
+
+        async function loadStats() {
+            const { data, error } = await supabase
+                .from("tasks")
+                .select("*");
+
+            if (error) {
+                console.log(error);
+                return;
+            }
+
+            const now = new Date();
+
+            // start of week (Sunday)
+            const start = new Date(now);
+            start.setDate(now.getDate() - now.getDay());
+            start.setHours(0,0,0,0);
+
+            let finished = 0;
+            let unfinished = 0;
+            let deadlines = 0;
+
+            data.forEach(task => {
+                const isDone = isBF ? task.donebybf : task.donebygf;
+
+                // ❌ unfinished
+                if (!isDone) {
+                    unfinished++;
+                }
+
+                // ✅ finished THIS WEEK
+                if (isDone && task.created_at) {
+                    const created = new Date(task.created_at);
+                    if (created >= start) {
+                        finished++;
+                    }
+                }
+
+                // 💀 deadlines THIS WEEK
+                if (task.deadline) {
+                    const d = new Date(task.deadline);
+
+                    const end = new Date(start);
+                    end.setDate(start.getDate() + 7);
+
+                    if (d >= start && d <= end) {
+                        deadlines++;
+                    }
+                }
+            });
+
+            /** remove if it fails **/
+            await supabase
+            .from("stats")
+            .update({
+                tasks_finished: finished,
+                tasks_unfinished: unfinished,
+                deadlines: deadlines
+            })
+            .eq("role", user.role);
+            //until here
+
+            // update UI
+            document.getElementById("statFinished").innerText = finished;
+            document.getElementById("statUnfinished").innerText = unfinished;
+            document.getElementById("statDeadlines").innerText = deadlines;
         }
 
         async function submitTask() {
@@ -676,6 +746,7 @@
 
             closePanel();
             loadTasks();
+            loadStats();
         }
 
         async function deleteTask(button, id) {
@@ -685,6 +756,7 @@
                 .eq("id", id);
 
             button.closest('.task-item').remove();
+            loadStats();
         }
 
         async function editTask(button, id) {
@@ -729,7 +801,7 @@
             if (e.key === 'Escape') closePanel();
         });
 
-        window.addEventListener("beforeunload", () => {
+        function sendOffline() {
             fetch(`https://wfsnvttpktwwelsjghqf.supabase.co/rest/v1/users?id=eq.${user.id}`, {
                 method: "PATCH",
                 headers: {
@@ -739,7 +811,20 @@
                 body: JSON.stringify({ online: false }),
                 keepalive: true
             })
-        })
+        }
+
+        // iOS + modern browsers
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                sendOffline();
+            }
+        });
+
+        // iOS Safari
+        window.addEventListener("pagehide", sendOffline);
+
+        // Desktop fallback
+        window.addEventListener("beforeunload", sendOffline);
     </script>
 </body>
 </html>
