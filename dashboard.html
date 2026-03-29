@@ -6,13 +6,8 @@
     <title>Study Buddy — Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'DM Sans', sans-serif;
@@ -23,765 +18,775 @@
             overflow: hidden;
         }
 
-        .main {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-        }
+        .main { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow: hidden; }
 
         .topbar {
-            height: 64px;
-            background: #13161e;
-            border-bottom: 1px solid #222636;
-            display: flex; align-items: center;
-            padding: 0 24px; gap: 16px; flex-shrink: 0;
-            width: 100%;
+            height: 64px; background: #13161e; border-bottom: 1px solid #222636;
+            display: flex; align-items: center; padding: 0 24px; gap: 16px; flex-shrink: 0; width: 100%;
         }
-
-        .page-title { 
-            font-family: 'Syne', sans-serif; 
-            font-weight: 700; 
-            font-size: 18px; 
-            color: #e8eaf0;
-        }
+        .page-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: #e8eaf0; }
 
         .content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
+            flex: 1; overflow-y: auto; overflow-x: hidden;
             padding: 32px 28px;
-            scrollbar-width: thin;
-            scrollbar-color: #222636 transparent;
-            min-height: 0;
+            scrollbar-width: thin; scrollbar-color: #222636 transparent; min-height: 0;
         }
         .content::-webkit-scrollbar { width: 6px; }
         .content::-webkit-scrollbar-thumb { background: #222636; border-radius: 3px; }
 
-        .greeting { 
-            margin-bottom: 32px; 
-        }
-        .greeting h1 { 
-            font-family: 'Syne', sans-serif; 
-            font-size: clamp(22px, 3vw, 30px); 
-            font-weight: 800; 
-            letter-spacing: -.4px; 
-        }
-        .greeting p { 
-            color: #636882; 
-            margin-top: 4px; 
-            font-size: 14.5px; 
-        }
+        .greeting { margin-bottom: 32px; }
+        .greeting h1 { font-family: 'Syne', sans-serif; font-size: clamp(22px,3vw,30px); font-weight: 800; letter-spacing: -.4px; }
+        .greeting p  { color: #636882; margin-top: 4px; font-size: 14.5px; }
 
-        @media (max-width: 768px) {
-            .content { padding: 20px 16px; }
-            .topbar  { padding: 0 16px; }
-        }
+        @media (max-width: 768px) { .content { padding: 20px 16px; } .topbar { padding: 0 16px; } }
 
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 16px; 
-            margin-bottom: 28px; 
-        }
-        .stat-card { 
-            background: #13161e; 
-            border: 1px solid #222636; 
-            border-radius: 14px; 
-            padding: 20px; 
-            transition: border-color .2s, transform .2s; 
-        }
-        .stat-card:hover { 
-            border-color: #6c8ef4; 
-            transform: translateY(-2px); 
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: #13161e; border: 1px solid #222636; border-radius: 14px; padding: 20px; transition: border-color .2s, transform .2s; }
+        .stat-card:hover { border-color: #6c8ef4; transform: translateY(-2px); }
         .stat-icon  { font-size: 22px; margin-bottom: 14px; }
-        .stat-value { 
-            font-family: 'Syne', sans-serif; 
-            font-size: 28px; 
-            font-weight: 800; 
-            letter-spacing: -.5px; 
-        }
+        .stat-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -.5px; }
         .stat-label { color: #636882; font-size: 12.5px; margin-top: 4px; }
 
-        .two-col { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-        @media (max-width: 900px) { 
-            .two-col { grid-template-columns: 1fr; } 
-        }
+        /* ── LAYOUT ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
         /* ── CARD ── */
-        .card { 
-            background: #13161e; 
-            border: 1px solid #222636; 
-            border-radius: 14px; 
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
+        .card { background: #13161e; border: 1px solid #222636; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; min-width: 0; }
+        .task-card   { height: 400px; }
+        .matrix-card { height: 400px; }
 
-        /* Task card: fixed height with internal scroll */
-        .task-card {
-            height: 400px;
+        .card-title {
+            font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+            margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
         }
+        .see-all { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6c8ef4; font-weight: 400; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
 
-        .card-title { 
-            font-family: 'Syne', sans-serif; 
-            font-weight: 700; 
-            font-size: 15px; 
-            margin-bottom: 14px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-        .see-all { 
-            font-family: 'DM Sans', sans-serif; 
-            font-size: 12px; 
-            color: #6c8ef4; 
-            font-weight: 400; 
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        /* Scrollable task list */
-        .task-list {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            min-height: 0;
-            scrollbar-width: thin;
-            scrollbar-color: #222636 transparent;
-        }
+        /* ── TASK LIST ── */
+        .task-list { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; scrollbar-width: thin; scrollbar-color: #222636 transparent; }
         .task-list::-webkit-scrollbar { width: 4px; }
         .task-list::-webkit-scrollbar-thumb { background: #222636; border-radius: 2px; }
 
-        /* ── TASK ITEM ── */
-        .task-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            padding: 10px 0; 
-            border-bottom: 1px solid #222636;
-            min-width: 0; /* critical: lets children shrink */
-        }
+        .task-item { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #222636; min-width: 0; cursor: grab; }
         .task-item:last-child { border-bottom: none; }
+        .task-item.is-dragging { opacity: .4; cursor: grabbing; }
 
-        .task-check {
-            width: 18px; height: 18px; border-radius: 5px;
-            border: 2px solid #222636; flex-shrink: 0; cursor: pointer;
-            display: grid; place-items: center;
-            transition: border-color .2s, background .2s;
-        }
+        .task-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #222636; flex-shrink: 0; cursor: pointer; display: grid; place-items: center; transition: border-color .2s, background .2s; }
         .task-check.done { background: #6c8ef4; border-color: #6c8ef4; }
         .task-check.done::after { content: '✓'; font-size: 11px; color: #fff; }
 
-        /* Task text: takes remaining space, truncates if too long */
-        .task-text { 
-            font-size: 13.5px; 
-            flex: 1;
-            min-width: 0;          /* critical: allows truncation */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .task-text { font-size: 13.5px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .task-text.dimmed { color: #636882; }
 
-        .task-edit {
-            border: 1px solid rgba(108,142,244,.25);
-            background: rgba(108,142,244,.12);
-            color: #6c8ef4;
-            width: 24px; height: 24px;
-            border-radius: 6px;
-            display: grid; place-items: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background .2s, transform .2s;
-            font-size: 13px;
-        }
+        .task-edit   { border: 1px solid rgba(108,142,244,.25); background: rgba(108,142,244,.12); color: #6c8ef4; width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; transition: background .2s, transform .2s; font-size: 13px; }
         .task-edit:hover { background: rgba(108,142,244,.24); transform: scale(.97); }
-
-        .task-delete {
-            margin-left: 0;
-            border: 1px solid rgba(255,255,255,.18);
-            background: rgba(255,255,255,.06);
-            color: #f87171;
-            width: 24px; height: 24px;
-            border-radius: 6px;
-            display: grid; place-items: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background .2s, transform .2s;
-            font-size: 13px;
-        }
+        .task-delete { border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: #f87171; width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; transition: background .2s, transform .2s; font-size: 13px; }
         .task-delete:hover { background: rgba(248,113,113,.18); transform: scale(.97); }
 
-        /* ── MODAL ── */
-        .panel-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.6);
-            backdrop-filter: blur(4px);
-            z-index: 80;
-            opacity: 0; pointer-events: none;
-            transition: opacity .25s;
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .panel-overlay.show { opacity: 1; pointer-events: all; }
+        /* ── MATRIX ── */
+        .matrix-subtitle { font-size: 11px; color: #636882; margin-bottom: 10px; margin-top: -8px; flex-shrink: 0; }
 
-        .add-task-panel {
-            width: 100%; max-width: 440px;
-            background: rgba(19,22,30,.9);
-            backdrop-filter: blur(28px) saturate(1.5);
-            -webkit-backdrop-filter: blur(28px) saturate(1.5);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 20px;
-            box-shadow: 0 0 0 1px rgba(108,142,244,.08),
-                        0 32px 64px rgba(0,0,0,.6),
-                        inset 0 1px 0 rgba(255,255,255,.06);
-            z-index: 90;
-            display: flex; flex-direction: column;
-            opacity: 0;
-            transform: scale(.95) translateY(12px);
-            transition: opacity .25s, transform .25s cubic-bezier(.34,1.56,.64,1);
-            pointer-events: none;
-        }
-        .panel-overlay.show .add-task-panel {
-            opacity: 1; transform: scale(1) translateY(0); pointer-events: all;
+        .matrix-axis-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; flex-shrink: 0; }
+        .axis-label { text-align: center; font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: #636882; padding: 2px 0; }
+
+        /* Grid: 2 cols, 2 rows, each row takes exactly half the remaining space */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;   /* equal rows */
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
         }
 
-        .panel-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 24px 24px 20px;
-            border-bottom: 1px solid rgba(255,255,255,.06);
+        /* Each quadrant: fixed by grid, scrolls internally */
+        .matrix-quadrant {
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            /* no overflow here — chip-list handles it */
+            transition: box-shadow .2s, background-color .2s;
+            min-height: 0;
+        }
+        .matrix-quadrant.drag-over {
+            box-shadow: inset 0 0 0 2px rgba(108,142,244,.75);
+            background-color: rgba(108,142,244,.07) !important;
+        }
+
+        .q-do       { background: rgba(248,113,113,.07); border: 1px solid rgba(248,113,113,.18); }
+        .q-plan     { background: rgba(251,191,36,.05);  border: 1px solid rgba(251,191,36,.15); }
+        .q-delegate { background: rgba(108,142,244,.07); border: 1px solid rgba(108,142,244,.18); }
+        .q-delete   { background: rgba(100,104,130,.07); border: 1px solid rgba(100,104,130,.18); }
+
+        .q-header { flex-shrink: 0; margin-bottom: 6px; }
+        .q-label  { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+        .q-do .q-label       { color: #f87171; }
+        .q-plan .q-label     { color: #fbbf24; }
+        .q-delegate .q-label { color: #6c8ef4; }
+        .q-delete .q-label   { color: #636882; }
+        .q-sub { font-size: 9px; color: #636882; margin-top: 1px; }
+
+        /* Scrollable chip list inside each quadrant */
+        .chip-list {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-height: 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,.08) transparent;
+        }
+        .chip-list::-webkit-scrollbar { width: 3px; }
+        .chip-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+        /* ── MATRIX CHIP ── */
+        .m-task {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 6px; padding: 5px 8px;
+            font-size: 11.5px; font-family: 'DM Sans', sans-serif; color: #e8eaf0;
+            cursor: grab; user-select: none; touch-action: none;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             flex-shrink: 0;
+            transition: background .15s;
         }
-        .panel-header h2 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800; font-size: 18px; letter-spacing: -.3px;
+        .m-task:hover { background: rgba(255,255,255,.1); }
+        .m-task.is-dragging { opacity: .3; cursor: grabbing; }
+
+        /* chip enter */
+        @keyframes chipIn {
+            from { opacity: 0; transform: translateY(-6px) scale(.92); }
+            to   { opacity: 1; transform: translateY(0)    scale(1); }
         }
-        .panel-close {
-            width: 32px; height: 32px; border-radius: 8px;
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.09);
-            color: #636882; font-size: 17px;
-            cursor: pointer; display: grid; place-items: center;
-            transition: background .2s, color .2s, border-color .2s;
+        /* chip exit — collapses height */
+        @keyframes chipOut {
+            0%   { opacity: 1; max-height: 40px; padding-top: 5px; padding-bottom: 5px; margin-bottom: 0; }
+            40%  { opacity: 0; transform: scale(.88); }
+            100% { opacity: 0; max-height: 0;  padding-top: 0;  padding-bottom: 0;  margin-bottom: -4px; }
         }
+        .m-task.chip-entering { animation: chipIn  .25s cubic-bezier(.34,1.56,.64,1) both; }
+        .m-task.chip-exiting  { animation: chipOut .2s ease forwards; pointer-events: none; overflow: hidden; }
+
+        /* empty hint */
+        .q-empty-hint {
+            font-size: 10px; color: rgba(99,104,130,.45);
+            text-align: center; padding: 6px 0; flex-shrink: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+
+        /* ── GHOST ── */
+        .drag-ghost {
+            position: fixed; pointer-events: none; z-index: 9999;
+            background: rgba(19,22,30,.96);
+            border: 1px solid rgba(108,142,244,.65);
+            border-radius: 7px; padding: 6px 11px;
+            font-size: 12px; font-family: 'DM Sans', sans-serif; color: #e8eaf0;
+            box-shadow: 0 12px 32px rgba(0,0,0,.55), 0 0 0 1px rgba(108,142,244,.15);
+            white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+            backdrop-filter: blur(12px);
+            /* transition only for tilt, NOT position (position is set directly) */
+            transition: transform .08s ease-out;
+            transform-origin: top left;
+        }
+
+        /* ── MODAL ── */
+        .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 80; opacity: 0; pointer-events: none; transition: opacity .25s; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .panel-overlay.show { opacity: 1; pointer-events: all; }
+        .add-task-panel { width: 100%; max-width: 440px; background: rgba(19,22,30,.9); backdrop-filter: blur(28px) saturate(1.5); -webkit-backdrop-filter: blur(28px) saturate(1.5); border: 1px solid rgba(255,255,255,.08); border-radius: 20px; box-shadow: 0 0 0 1px rgba(108,142,244,.08), 0 32px 64px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06); z-index: 90; display: flex; flex-direction: column; opacity: 0; transform: scale(.95) translateY(12px); transition: opacity .25s, transform .25s cubic-bezier(.34,1.56,.64,1); pointer-events: none; }
+        .panel-overlay.show .add-task-panel { opacity: 1; transform: scale(1) translateY(0); pointer-events: all; }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 24px 20px; border-bottom: 1px solid rgba(255,255,255,.06); flex-shrink: 0; }
+        .panel-header h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: -.3px; }
+        .panel-close { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); color: #636882; font-size: 17px; cursor: pointer; display: grid; place-items: center; transition: background .2s, color .2s, border-color .2s; }
         .panel-close:hover { background: rgba(248,113,113,.12); border-color: rgba(248,113,113,.3); color: #f87171; }
-
-        .panel-body {
-            padding: 20px 24px;
-            display: flex; flex-direction: column; gap: 16px;
-        }
-
+        .panel-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
         .pf { display: flex; flex-direction: column; gap: 7px; }
-        .pf label {
-            font-size: 12.5px; font-weight: 600;
-            letter-spacing: .03em; color: #636882;
-            text-transform: uppercase;
-        }
-        .pf input, .pf textarea, .pf select {
-            width: 100%;
-            background: rgba(255,255,255,.04);
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 10px;
-            padding: 11px 14px;
-            color: #e8eaf0;
-            font-family: 'DM Sans', sans-serif; font-size: 14px;
-            outline: none;
-            transition: border-color .2s, background .2s, box-shadow .2s;
-            resize: none;
-        }
+        .pf label { font-size: 12.5px; font-weight: 600; letter-spacing: .03em; color: #636882; text-transform: uppercase; }
+        .pf input, .pf textarea { width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 10px; padding: 11px 14px; color: #e8eaf0; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color .2s, background .2s, box-shadow .2s; resize: none; }
         .pf input::placeholder, .pf textarea::placeholder { color: #636882; }
-        .pf input:focus, .pf textarea:focus, .pf select:focus {
-            border-color: rgba(108,142,244,.5);
-            background: rgba(108,142,244,.06);
-            box-shadow: 0 0 0 3px rgba(108,142,244,.1);
-        }
+        .pf input:focus, .pf textarea:focus { border-color: rgba(108,142,244,.5); background: rgba(108,142,244,.06); box-shadow: 0 0 0 3px rgba(108,142,244,.1); }
         .date-input { color-scheme: dark; }
-
-        .panel-footer {
-            padding: 16px 24px 24px;
-            border-top: 1px solid rgba(255,255,255,.06);
-            display: flex; gap: 10px; flex-shrink: 0;
-        }
-        .btn-cancel {
-            flex: 1; padding: 12px;
-            background: rgba(255,255,255,.04);
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 10px;
-            color: #636882; font-family: 'DM Sans', sans-serif;
-            font-size: 14px; font-weight: 500; cursor: pointer;
-            transition: background .2s, color .2s, border-color .2s;
-        }
+        .panel-footer { padding: 16px 24px 24px; border-top: 1px solid rgba(255,255,255,.06); display: flex; gap: 10px; flex-shrink: 0; }
+        .btn-cancel { flex: 1; padding: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 10px; color: #636882; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
         .btn-cancel:hover { background: rgba(255,255,255,.08); color: #e8eaf0; border-color: rgba(255,255,255,.15); }
-        .btn-add {
-            flex: 2; padding: 12px;
-            background: linear-gradient(135deg, #6c8ef4, #a78bfa);
-            border: none; border-radius: 10px;
-            color: #fff; font-family: 'Syne', sans-serif;
-            font-size: 14px; font-weight: 700; cursor: pointer;
-            box-shadow: 0 4px 16px rgba(108,142,244,.3);
-            transition: opacity .2s, transform .15s, box-shadow .2s;
-            position: relative; overflow: hidden;
-        }
-        .btn-add::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,.15), transparent 60%);
-            opacity: 0; transition: opacity .2s;
-        }
+        .btn-add { flex: 2; padding: 12px; background: linear-gradient(135deg,#6c8ef4,#a78bfa); border: none; border-radius: 10px; color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 16px rgba(108,142,244,.3); transition: opacity .2s, transform .15s, box-shadow .2s; position: relative; overflow: hidden; }
+        .btn-add::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(255,255,255,.15),transparent 60%); opacity: 0; transition: opacity .2s; }
         .btn-add:hover { opacity: .92; box-shadow: 0 6px 24px rgba(108,142,244,.4); }
         .btn-add:hover::before { opacity: 1; }
         .btn-add:active { transform: scale(.98); }
 
-        @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
         .task-item.new-task { animation: fadeSlideIn .3s ease both; }
     </style>
 </head>
 <body>
-    <div class="main">
-        <div class="topbar">
-            <span class="page-title">Dashboard</span>
+<div class="main">
+    <div class="topbar"><span class="page-title">Dashboard</span></div>
+
+    <div class="content">
+        <div class="greeting">
+            <h1 id="greet">Good [time], [user] 👋</h1>
+            <p id="greetsub">Here are your tasks for today.</p>
         </div>
 
-        <div class="content">
-            <div class="greeting">
-                <h1 id="greet">Good [time], [user] 👋</h1>
-                <p id="greetsub">Here are your tasks for today.</p>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
+            <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">0</div><div class="stat-label">Tasks finished this week</div></div>
+            <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">0</div><div class="stat-label">Tasks unfinished</div></div>
+            <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">0</div><div class="stat-label">Deadlines this week</div></div>
+        </div>
+
+        <div class="two-col">
+            <div class="card task-card">
+                <div class="card-title">Today's Tasks <span class="see-all" id="addNewBtn">Add new +</span></div>
+                <div class="task-list" id="taskList"></div>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
-                <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">0</div><div class="stat-label">Tasks finished this week</div></div>
-                <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">0</div><div class="stat-label">Tasks unfinished</div></div>
-                <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">0</div><div class="stat-label">Deadlines this week</div></div>
-            </div>
+            <div class="card matrix-card" style="gap:0;">
+                <div class="card-title" style="margin-bottom:4px;">Eisenhower Matrix</div>
+                <p class="matrix-subtitle">Drag tasks into a quadrant · double-tap to remove</p>
 
-            <div class="two-col">
-                <!-- Task card: fixed height, internally scrollable -->
-                <div class="card task-card">
-                    <div class="card-title">
-                        Today's Tasks <span class="see-all">Add new +</span>
-                    </div>
-                    <div class="task-list" id="taskList">
-                        <!-- tasks injected here by JS -->
-                    </div>
+                <div class="matrix-axis-row">
+                    <div class="axis-label" style="color:#f87171;">⚡ Urgent</div>
+                    <div class="axis-label">🕐 Not Urgent</div>
                 </div>
 
-                <div class="card">
-                    <!-- second column content -->
+                <div class="matrix-grid" id="matrixGrid">
+                    <div class="matrix-quadrant q-do" data-q="do">
+                        <div class="q-header"><div class="q-label">Do</div><div class="q-sub">Important &amp; Urgent</div></div>
+                        <div class="chip-list" data-q="do"></div>
+                    </div>
+                    <div class="matrix-quadrant q-plan" data-q="plan">
+                        <div class="q-header"><div class="q-label">Plan</div><div class="q-sub">Important, Not Urgent</div></div>
+                        <div class="chip-list" data-q="plan"></div>
+                    </div>
+                    <div class="matrix-quadrant q-delegate" data-q="delegate">
+                        <div class="q-header"><div class="q-label">Delegate</div><div class="q-sub">Urgent, Not Important</div></div>
+                        <div class="chip-list" data-q="delegate"></div>
+                    </div>
+                    <div class="matrix-quadrant q-delete" data-q="delete">
+                        <div class="q-header"><div class="q-label">Eliminate</div><div class="q-sub">Not Urgent, Not Important</div></div>
+                        <div class="chip-list" data-q="delete"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="panel-overlay" id="panelOverlay" onclick="handleOverlayClick(event)">
-        <div class="add-task-panel" id="addTaskPanel">
-            <div class="panel-header">
-                <h2>✦ New Task</h2>
-                <button class="panel-close" onclick="closePanel()">✕</button>
-            </div>
-
-            <div class="panel-body">
-                <div class="pf">
-                    <label>Task title</label>
-                    <input type="text" id="taskTitle" placeholder="e.g. Redesign onboarding screen" />
-                </div>
-                <div class="pf">
-                    <label>Description</label>
-                    <textarea id="taskDesc" rows="3" placeholder="Add some context or notes…"></textarea>
-                </div>
-                <div class="pf">
-                    <label>Due date &amp; time</label>
-                    <input type="datetime-local" id="taskDate" class="date-input" />
-                </div>
-            </div>
-
-            <div class="panel-footer">
-                <button class="btn-cancel" onclick="closePanel()">Cancel</button>
-                <button class="btn-add" id="panelSubmitBtn" onclick="submitTask()">Add Task</button>
-            </div>
+<div class="panel-overlay" id="panelOverlay" onclick="handleOverlayClick(event)">
+    <div class="add-task-panel">
+        <div class="panel-header">
+            <h2 id="panelTitle">✦ New Task</h2>
+            <button class="panel-close" onclick="closePanel()">✕</button>
+        </div>
+        <div class="panel-body">
+            <div class="pf"><label>Task title</label><input type="text" id="taskTitle" placeholder="e.g. Finish assignment" /></div>
+            <div class="pf"><label>Description</label><textarea id="taskDesc" rows="3" placeholder="Add some context or notes…"></textarea></div>
+            <div class="pf"><label>Due date &amp; time</label><input type="datetime-local" id="taskDate" class="date-input" /></div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn-cancel" onclick="closePanel()">Cancel</button>
+            <button class="btn-add" id="panelSubmitBtn" onclick="submitTask()">Add Task</button>
         </div>
     </div>
+</div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        const supabaseUrl = "https://wfsnvttpktwwelsjghqf.supabase.co"
-        const supabaseKey = "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
+const supabaseUrl = "https://wfsnvttpktwwelsjghqf.supabase.co"
+const supabaseKey = "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-        const supabase = createClient(supabaseUrl, supabaseKey)
+const user = JSON.parse(localStorage.getItem("user"))
+if (!user) { window.location.href = "login.html" }
+const isBF = user.role === "bf"
 
-        const user = JSON.parse(localStorage.getItem("user"))
+function getTime() { const h = new Date().getHours(); return h<12?"morning":h<17?"afternoon":"evening" }
+document.getElementById("greet").textContent    = `Good ${getTime()}, ${user.username} 👋`
+document.getElementById("greetsub").textContent = `Here are your tasks for this ${getTime()}.`
 
-        if (!user) {
-            window.location.href = "login.html"
+const partnername   = document.getElementById("partnername")
+const partnerstatus = document.getElementById("partnerstatus")
+function isOnline(ls) { return (new Date() - new Date(ls)) < 30000 }
+
+async function updatePartnerStatus() {
+    const { data: users, error } = await supabase.from('users').select('username,role,last_seen').neq('role',user.role)
+    if (error||!users?.length) return
+    const p = users[0]
+    partnername.innerText = p.username
+    const on = isOnline(p.last_seen)
+    partnerstatus.innerText = on?"online":"offline"
+    partnerstatus.style.color = on?"#4ade80":"#f87171"
+}
+function updateOnlineStatus() {
+    fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}`,{method:"PATCH",headers:{"Content-Type":"application/json","apikey":supabaseKey},body:JSON.stringify({last_seen:new Date().toISOString(),online:true})})
+}
+
+// ── MATRIX STATE ──
+const MATRIX_KEY = `matrix_sb`
+let matrixMap = {}
+try { matrixMap = JSON.parse(localStorage.getItem(MATRIX_KEY))||{} } catch(e) { matrixMap={} }
+function saveMatrix() { localStorage.setItem(MATRIX_KEY, JSON.stringify(matrixMap)) }
+
+let allTasks = []
+
+// ── RENDER TASK LIST ──
+function renderTaskList() {
+    const taskList = document.getElementById('taskList')
+    taskList.innerHTML = ''
+    allTasks.forEach(task => {
+        const isDone   = isBF ? task.donebybf : task.donebygf
+        const inMatrix = !!matrixMap[task.id]
+        const item = document.createElement('div')
+        item.className = 'task-item'
+        item.dataset.id          = task.id
+        item.dataset.description = task.description||''
+        item.dataset.deadline    = task.deadline||''
+        item.dataset.title       = task.title
+        item.draggable = true
+        item.innerHTML = `
+            <div class="task-check ${isDone?'done':''}" data-id="${task.id}"></div>
+            <span class="task-text ${inMatrix?'dimmed':''}" title="${task.title}">${task.title}</span>
+            <button class="task-edit"   data-id="${task.id}">✎</button>
+            <button class="task-delete" data-id="${task.id}">✕</button>
+        `
+        // event listeners (avoid inline onclick for cleaner touch handling)
+        item.querySelector('.task-check').addEventListener('click', e => { e.stopPropagation(); toggleTask(e.currentTarget, task.id) })
+        item.querySelector('.task-edit').addEventListener('click',   e => { e.stopPropagation(); editTask(e.currentTarget, task.id) })
+        item.querySelector('.task-delete').addEventListener('click', e => { e.stopPropagation(); deleteTask(e.currentTarget, task.id) })
+
+        // desktop drag
+        item.addEventListener('dragstart', e => {
+            if (e.target.closest('button')) { e.preventDefault(); return }
+            e.dataTransfer.setData('taskId', task.id)
+            e.dataTransfer.setData('source', 'list')
+            e.dataTransfer.effectAllowed = 'move'
+            requestAnimationFrame(() => item.classList.add('is-dragging'))
+        })
+        item.addEventListener('dragend', () => item.classList.remove('is-dragging'))
+
+        taskList.appendChild(item)
+    })
+}
+
+// ── RENDER MATRIX ──
+function renderMatrix() {
+    document.querySelectorAll('.chip-list').forEach(list => {
+        const qKey = list.dataset.q
+        list.innerHTML = ''
+        const tasksInQ = allTasks.filter(t => matrixMap[t.id] === qKey)
+        if (tasksInQ.length === 0) {
+            list.appendChild(makeHint())
+        } else {
+            tasksInQ.forEach(task => list.appendChild(makeChip(task, false)))
+        }
+    })
+}
+
+function makeHint() {
+    const h = document.createElement('div')
+    h.className = 'q-empty-hint'
+    h.textContent = 'Drop tasks here'
+    return h
+}
+
+function makeChip(task, animate) {
+    const chip = document.createElement('div')
+    chip.className = 'm-task' + (animate ? ' chip-entering' : '')
+    chip.textContent = task.title
+    chip.dataset.taskId = task.id
+    chip.title = task.title
+    chip.draggable = true
+
+    if (animate) chip.addEventListener('animationend', () => chip.classList.remove('chip-entering'), {once:true})
+
+    // desktop drag from matrix
+    chip.addEventListener('dragstart', e => {
+        e.stopPropagation()
+        e.dataTransfer.setData('taskId', task.id)
+        e.dataTransfer.setData('source', 'matrix')
+        e.dataTransfer.effectAllowed = 'move'
+        requestAnimationFrame(() => chip.classList.add('is-dragging'))
+    })
+    chip.addEventListener('dragend', () => chip.classList.remove('is-dragging'))
+
+    // double-click / double-tap to remove
+    let lastTap = 0
+    chip.addEventListener('click', () => {
+        const now = Date.now()
+        if (now - lastTap < 350) removeFromMatrix(task.id)
+        lastTap = now
+    })
+    chip.addEventListener('dblclick', () => removeFromMatrix(task.id))
+
+    return chip
+}
+
+// ── MATRIX OPERATIONS ──
+function addToMatrix(taskId, quadrant) {
+    const tid = String(taskId)
+    if (matrixMap[tid] === quadrant) return
+    const oldQ = matrixMap[tid]
+    matrixMap[tid] = quadrant
+    saveMatrix()
+
+    // dim in task list
+    const listItem = document.querySelector(`#taskList .task-item[data-id="${tid}"]`)
+    if (listItem) listItem.querySelector('.task-text').classList.add('dimmed')
+
+    // remove from old chip-list with exit animation
+    if (oldQ) {
+        const oldChip = document.querySelector(`.chip-list[data-q="${oldQ}"] .m-task[data-task-id="${tid}"]`)
+        if (oldChip) exitChip(oldChip, oldQ)
+    }
+
+    // add to new chip-list
+    const newList = document.querySelector(`.chip-list[data-q="${quadrant}"]`)
+    if (!newList) return
+    // remove hint immediately
+    newList.querySelector('.q-empty-hint')?.remove()
+
+    const task = allTasks.find(t => String(t.id) === tid)
+    if (!task) return
+    const chip = makeChip(task, true)
+    newList.appendChild(chip)
+}
+
+function removeFromMatrix(taskId) {
+    const tid = String(taskId)
+    const oldQ = matrixMap[tid]
+    if (!oldQ) return
+    delete matrixMap[tid]
+    saveMatrix()
+
+    // un-dim in task list
+    const listItem = document.querySelector(`#taskList .task-item[data-id="${tid}"]`)
+    if (listItem) listItem.querySelector('.task-text').classList.remove('dimmed')
+
+    const chip = document.querySelector(`.chip-list[data-q="${oldQ}"] .m-task[data-task-id="${tid}"]`)
+    if (chip) exitChip(chip, oldQ)
+}
+
+function exitChip(chip, qKey) {
+    chip.classList.add('chip-exiting')
+    chip.addEventListener('animationend', () => {
+        chip.remove()
+        // show hint if now empty
+        const list = document.querySelector(`.chip-list[data-q="${qKey}"]`)
+        if (list && list.querySelectorAll('.m-task').length === 0) {
+            list.appendChild(makeHint())
+        }
+    }, {once:true})
+}
+
+// ── DESKTOP HTML5 DRAG & DROP on quadrants ──
+document.querySelectorAll('.matrix-quadrant').forEach(q => {
+    q.addEventListener('dragover', e => {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+        q.classList.add('drag-over')
+    })
+    q.addEventListener('dragleave', e => {
+        if (!q.contains(e.relatedTarget)) q.classList.remove('drag-over')
+    })
+    q.addEventListener('drop', e => {
+        e.preventDefault()
+        q.classList.remove('drag-over')
+        const taskId = e.dataTransfer.getData('taskId')
+        if (taskId) addToMatrix(taskId, q.dataset.q)
+    })
+})
+
+// drop onto task list = remove from matrix
+const taskListEl = document.getElementById('taskList')
+taskListEl.addEventListener('dragover', e => e.preventDefault())
+taskListEl.addEventListener('drop', e => {
+    e.preventDefault()
+    const taskId = e.dataTransfer.getData('taskId')
+    const source = e.dataTransfer.getData('source')
+    if (source === 'matrix' && taskId) removeFromMatrix(taskId)
+})
+
+// ── UNIFIED POINTER DRAG (mouse + touch) ──
+;(function(){
+    let dragging   = null   // DOM element being dragged
+    let ghost      = null   // floating ghost div
+    let grabX      = 0, grabY = 0
+    let curX       = 0, curY = 0
+    let prevX      = 0, prevY = 0
+    let rafId      = null
+    let currentQ   = null
+    let longPressTimer = null
+    let isDragging = false  // true once drag actually started (after threshold)
+
+    const LONG_PRESS_MS = 250   // ms before drag activates on touch
+    const MOVE_THRESHOLD = 6   // px before we consider it a drag on mouse
+
+    function makeGhost(el) {
+        ghost = document.createElement('div')
+        ghost.className = 'drag-ghost'
+        ghost.textContent = (el.dataset.title || el.textContent || '').trim()
+        document.body.appendChild(ghost)
+    }
+    function moveGhost(x, y) {
+        if (!ghost) return
+        ghost.style.left = (x - grabX) + 'px'
+        ghost.style.top  = (y - grabY) + 'px'
+    }
+    function tiltGhost(dx) {
+        if (!ghost) return
+        const tilt = Math.max(-15, Math.min(15, dx * 0.6))
+        const sc   = Math.min(1.08, 1.04 + Math.abs(dx) * 0.002)
+        ghost.style.transform = `rotate(${tilt}deg) scale(${sc})`
+    }
+    function removeGhost() {
+        ghost?.remove(); ghost = null
+        cancelAnimationFrame(rafId); rafId = null
+    }
+    function quadAt(x, y) {
+        for (const q of document.querySelectorAll('.matrix-quadrant')) {
+            const r = q.getBoundingClientRect()
+            if (x>=r.left && x<=r.right && y>=r.top && y<=r.bottom) return q
+        }
+        return null
+    }
+    function listAt(x, y) {
+        const r = taskListEl.getBoundingClientRect()
+        return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom
+    }
+    function setDragOver(q) {
+        if (q === currentQ) return
+        currentQ?.classList.remove('drag-over')
+        currentQ = q
+        currentQ?.classList.add('drag-over')
+    }
+    function startDrag(el, cx, cy) {
+        dragging = el
+        isDragging = true
+        const rect = el.getBoundingClientRect()
+        grabX = Math.min(cx - rect.left, 120)
+        grabY = cy - rect.top
+        prevX = curX = cx; prevY = curY = cy
+        el.classList.add('is-dragging')
+        makeGhost(el)
+        moveGhost(cx, cy)
+        rafId = requestAnimationFrame(loop)
+    }
+    function loop() {
+        moveGhost(curX, curY)
+        tiltGhost(curX - prevX)
+        prevX = curX; prevY = curY
+        setDragOver(quadAt(curX, curY))
+        rafId = requestAnimationFrame(loop)
+    }
+    function endDrag(cx, cy) {
+        if (!dragging) return
+        clearTimeout(longPressTimer)
+        cancelAnimationFrame(rafId); rafId = null
+
+        const q      = quadAt(cx, cy)
+        const onList = listAt(cx, cy)
+        const taskId = dragging.dataset.taskId || dragging.dataset.id
+        const isChip = dragging.classList.contains('m-task')
+
+        currentQ?.classList.remove('drag-over'); currentQ = null
+        removeGhost()
+        dragging.classList.remove('is-dragging')
+
+        if (isDragging && taskId) {
+            if (q)                        addToMatrix(taskId, q.dataset.q)
+            else if (isChip && onList)    removeFromMatrix(taskId)
         }
 
-        const isBF = user.role === "bf";
-        const isGF = user.role === "gf";
+        dragging = null; isDragging = false
+    }
 
-        function getTime() {
-            const hour = new Date().getHours();
+    // ── MOUSE ──
+    document.addEventListener('mousedown', e => {
+        const el = e.target.closest('.m-task') || (!e.target.closest('button') && e.target.closest('.task-item'))
+        if (!el) return
+        e.preventDefault()
+        const startX = e.clientX, startY = e.clientY
+        let moved = false
 
-            if (hour < 12) {
-                return "morning";
-            } else if (hour < 17) {
-                return "afternoon";
-            } else if (hour < 24) {
-                return "evening";
+        function onMove(e2) {
+            if (!moved && (Math.abs(e2.clientX-startX)>MOVE_THRESHOLD || Math.abs(e2.clientY-startY)>MOVE_THRESHOLD)) {
+                moved = true
+                startDrag(el, e2.clientX, e2.clientY)
             }
+            if (isDragging) { curX = e2.clientX; curY = e2.clientY }
         }
-        
-        function getName() {
-            return user.username;
+        function onUp(e2) {
+            document.removeEventListener('mousemove', onMove)
+            document.removeEventListener('mouseup',   onUp)
+            if (isDragging) endDrag(e2.clientX, e2.clientY)
+            else { isDragging = false; dragging = null }
         }
+        document.addEventListener('mousemove', onMove)
+        document.addEventListener('mouseup',   onUp)
+    })
 
-        document.getElementById("greet").textContent = "Good " + getTime() + ", " + getName() + " 👋";
-        document.getElementById("greetsub").textContent = "Here are your tasks for this " + getTime() + ".";
+    // ── TOUCH ──
+    document.addEventListener('touchstart', e => {
+        const el = e.target.closest('.m-task') || (!e.target.closest('button') && e.target.closest('.task-item'))
+        if (!el) return
+        const t = e.touches[0]
+        const startX = t.clientX, startY = t.clientY
+        curX = startX; curY = startY
 
-        const partnername = document.getElementById("partnername")
-        const partnerstatus = document.getElementById("partnerstatus")
+        // Long press to activate drag
+        longPressTimer = setTimeout(() => {
+            startDrag(el, startX, startY)
+            // light haptic if available
+            if (navigator.vibrate) navigator.vibrate(30)
+        }, LONG_PRESS_MS)
+    }, {passive:true})
 
-        async function updatePartnerStatus() {
-            const { data: users, error } = await supabase
-                .from('users')
-                .select('username, role, last_seen')
-                .neq('role', user.role)
+    document.addEventListener('touchmove', e => {
+        const t = e.touches[0]
+        const dx = Math.abs(t.clientX - curX)
+        const dy = Math.abs(t.clientY - curY)
 
-            if (error) {
-                console.log("Error fetching partner:", error)
-                return
-            }
-
-            if (users && users.length > 0) {
-                const partner = users[0]
-
-                partnername.innerText = partner.username;
-
-                const online = isOnline(partner.last_seen);
-
-                if (online) {
-                    partnerstatus.innerText = "online";
-                    partnerstatus.style.color = "#4ade80";
-                } else {
-                    partnerstatus.innerText = "offline";
-                    partnerstatus.style.color = "#f87171";
-                }
-            }
+        // cancel long-press if user scrolls before threshold
+        if (!isDragging && (dx>8||dy>8)) {
+            clearTimeout(longPressTimer)
+            longPressTimer = null
+            return
         }
+        if (!isDragging) return
+        e.preventDefault()
+        curX = t.clientX; curY = t.clientY
+    }, {passive:false})
 
-        function updateOnlineStatus() {
-            fetch(`https://wfsnvttpktwwelsjghqf.supabase.co/rest/v1/users?id=eq.${user.id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "apikey": "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
-                },
-                body: JSON.stringify({ online: true })
-            })
-        }
+    document.addEventListener('touchend', e => {
+        clearTimeout(longPressTimer); longPressTimer = null
+        if (!isDragging) { dragging = null; return }
+        const t = e.changedTouches[0]
+        endDrag(t.clientX, t.clientY)
+    })
+    document.addEventListener('touchcancel', () => {
+        clearTimeout(longPressTimer); longPressTimer = null
+        if (!isDragging) { dragging = null; return }
+        currentQ?.classList.remove('drag-over'); currentQ = null
+        removeGhost()
+        dragging?.classList.remove('is-dragging')
+        dragging = null; isDragging = false
+    })
+})()
 
-        updatePartnerStatus()
-        updateOnlineStatus()
-        loadTasks()
-        loadStats()
-        setInterval(updatePartnerStatus, 3000)
-        setInterval(updateOnlineStatus, 3000)
+// ── STATS ──
+async function loadStats() {
+    const {data,error} = await supabase.from("tasks").select("*")
+    if (error){console.log(error);return}
+    const now=new Date(), start=new Date(now)
+    start.setDate(now.getDate()-now.getDay()); start.setHours(0,0,0,0)
+    const end=new Date(start); end.setDate(start.getDate()+7)
+    let finished=0,unfinished=0,deadlines=0
+    data.forEach(task=>{
+        const isDone=isBF?task.donebybf:task.donebygf
+        if(!isDone)unfinished++
+        if(isDone&&task.created_at&&new Date(task.created_at)>=start)finished++
+        if(task.deadline){const d=new Date(task.deadline);if(d>=start&&d<=end)deadlines++}
+    })
+    await supabase.from("stats").update({tasks_finished:finished,tasks_unfinished:unfinished,deadlines}).eq("role",user.role)
+    document.getElementById("statFinished").innerText=finished
+    document.getElementById("statUnfinished").innerText=unfinished
+    document.getElementById("statDeadlines").innerText=deadlines
+}
 
-        let editingTaskItem = null;
+// ── LOAD TASKS ──
+async function loadTasks() {
+    const {data,error} = await supabase.from("tasks").select("*").order("created_at",{ascending:false})
+    if(error){console.log(error);return}
+    allTasks = data
+    renderTaskList()
+    renderMatrix()
+}
 
-        function toLocalDatetimeInput(date) {
-            const offset = date.getTimezoneOffset() * 60000;
-            return new Date(date - offset).toISOString().slice(0, 16);
-        }
+// ── TASK CRUD ──
+async function toggleTask(el, id) {
+    el.classList.toggle('done')
+    const field = isBF?"donebybf":"donebygf"
+    await supabase.from("tasks").update({[field]:el.classList.contains('done')}).eq("id",id)
+    loadStats()
+}
 
-        function openPanel(taskItem = null) {
-            // Guard against being called as an event handler (e.g. addEventListener passes event)
-            if (taskItem && taskItem.target !== undefined && taskItem.currentTarget !== undefined) {
-                taskItem = null;
-            }
+let editingTaskItem = null
+function toLocal(date){ const off=date.getTimezoneOffset()*60000; return new Date(date-off).toISOString().slice(0,16) }
 
-            if (taskItem && taskItem.querySelector) {
-                editingTaskItem = taskItem;
-            }
+function openPanel(taskItem=null) {
+    if(taskItem?.target!==undefined) taskItem=null
+    editingTaskItem = taskItem?.querySelector ? taskItem : null
+    const heading=document.getElementById('panelTitle'), btn=document.getElementById('panelSubmitBtn')
+    if(editingTaskItem){
+        heading.innerText='✦ Edit Task'; btn.innerText='Edit Task'
+        document.getElementById('taskTitle').value = editingTaskItem.querySelector('.task-text')?.innerText||''
+        document.getElementById('taskDesc').value  = editingTaskItem.dataset.description||''
+        const raw=editingTaskItem.dataset.deadline||''
+        document.getElementById('taskDate').value  = raw ? toLocal(new Date(raw)) : ''
+    } else {
+        heading.innerText='✦ New Task'; btn.innerText='Add Task'
+        document.getElementById('taskTitle').value=''
+        document.getElementById('taskDesc').value=''
+        document.getElementById('taskDate').value=''
+    }
+    document.getElementById('panelOverlay').classList.add('show')
+    setTimeout(()=>document.getElementById('taskTitle').focus(),50)
+}
+function closePanel() { editingTaskItem=null; document.getElementById('panelOverlay').classList.remove('show') }
+function handleOverlayClick(e) { if(e.target===document.getElementById('panelOverlay'))closePanel() }
 
-            const panelHeading = document.querySelector('.panel-header h2');
-            const submitBtn = document.getElementById('panelSubmitBtn');
+async function submitTask() {
+    const title=document.getElementById('taskTitle').value.trim()
+    const desc=document.getElementById('taskDesc').value.trim()
+    const dateLocal=document.getElementById('taskDate').value
+    const deadline=dateLocal?new Date(dateLocal).toISOString():null
+    if(!title){alert("Enter a title");return}
+    if(editingTaskItem){
+        const {error}=await supabase.from("tasks").update({title,description:desc,deadline}).eq("id",editingTaskItem.dataset.id)
+        if(error)console.log(error)
+        editingTaskItem=null; closePanel(); loadTasks(); return
+    }
+    const {error}=await supabase.from("tasks").insert([{title,description:desc,deadline,created_at:new Date().toISOString(),donebybf:false,donebygf:false}])
+    if(error){console.log(error);return}
+    closePanel(); loadTasks(); loadStats()
+}
 
-            if (editingTaskItem) {
-                panelHeading.innerText = '✦ Edit Task';
-                submitBtn.innerText = 'Edit Task';
-                const currentText = editingTaskItem.querySelector('.task-text')?.innerText || '';
-                document.getElementById('taskTitle').value = currentText;
-                const currentDesc = editingTaskItem.dataset.description || '';
-                document.getElementById('taskDesc').value = currentDesc;
-                const rawDeadline = editingTaskItem.dataset.deadline || '';
-                const currentDeadline = rawDeadline ? toLocalDatetimeInput(new Date(rawDeadline)) : '';
-                document.getElementById('taskDate').value = currentDeadline;
-            } else {
-                editingTaskItem = null;
-                panelHeading.innerText = '✦ New Task';
-                submitBtn.innerText = 'Add Task';
-                document.getElementById('taskTitle').value = '';
-                document.getElementById('taskDesc').value = '';
-                document.getElementById('taskDate').value = '';
-            }
+async function deleteTask(button, id) {
+    const tid=String(id)
+    if(matrixMap[tid]){delete matrixMap[tid];saveMatrix()}
+    await supabase.from("tasks").delete().eq("id",id)
+    button.closest('.task-item').remove()
+    allTasks=allTasks.filter(t=>String(t.id)!==tid)
+    renderMatrix(); loadStats()
+}
 
-            document.getElementById('panelOverlay').classList.add('show');
-            setTimeout(() => document.getElementById('taskTitle').focus(), 50);
-        }
+async function editTask(button, id) {
+    const item=button.closest('.task-item')
+    const {data,error}=await supabase.from("tasks").select("*").eq("id",id).single()
+    if(error){console.log(error);return}
+    editingTaskItem=item
+    document.getElementById('taskTitle').value=data.title
+    document.getElementById('taskDesc').value=data.description||''
+    document.getElementById('taskDate').value=data.deadline?toLocal(new Date(data.deadline)):''
+    openPanel(item)
+}
 
-        function closePanel() {
-            editingTaskItem = null;
-            document.getElementById('panelOverlay').classList.remove('show');
-        }
+// expose
+window.openPanel=openPanel; window.closePanel=closePanel
+window.handleOverlayClick=handleOverlayClick; window.submitTask=submitTask
 
-        function handleOverlayClick(e) {
-            if (e.target === document.getElementById('panelOverlay')) closePanel();
-        }
+document.getElementById('addNewBtn').addEventListener('click', ()=>openPanel())
+document.addEventListener('keydown', e=>{ if(e.key==='Escape')closePanel() })
 
-        async function toggleTask(el, id) {
-            el.classList.toggle('done');
-
-            const isDone = el.classList.contains('done');
-            const field = isBF ? "donebybf" : "donebygf";
-
-            await supabase
-                .from("tasks")
-                .update({ [field]: isDone })
-                .eq("id", id);
-
-            loadStats();
-        }
-
-        async function loadTasks() {
-            const { data, error } = await supabase.from("tasks").select("*").order("created_at", { ascending: false });
-            if (error) { console.log(error); return; }
-
-            const taskList = document.getElementById('taskList');
-            taskList.innerHTML = '';
-
-            data.forEach(task => {
-                const isDone = isBF ? task.donebybf : task.donebygf;
-                const item   = document.createElement('div');
-                item.className       = 'task-item';
-                item.dataset.id          = task.id;
-                item.dataset.description = task.description || '';
-                item.dataset.deadline    = task.deadline    || '';
-                item.innerHTML = `
-                    <div class="task-check ${isDone ? 'done' : ''}" onclick="toggleTask(this,'${task.id}')"></div>
-                    <span class="task-text" title="${task.title}">${task.title}</span>
-                    <button class="task-edit"   onclick="editTask(this,'${task.id}')">✎</button>
-                    <button class="task-delete"  onclick="deleteTask(this,'${task.id}')">✕</button>
-                `;
-                taskList.appendChild(item);
-            });
-        }
-
-        async function loadStats() {
-            const { data, error } = await supabase
-                .from("tasks")
-                .select("*");
-
-            if (error) {
-                console.log(error);
-                return;
-            }
-
-            const now = new Date();
-
-            // start of week (Sunday)
-            const start = new Date(now);
-            start.setDate(now.getDate() - now.getDay());
-            start.setHours(0,0,0,0);
-
-            let finished = 0;
-            let unfinished = 0;
-            let deadlines = 0;
-
-            data.forEach(task => {
-                const isDone = isBF ? task.donebybf : task.donebygf;
-
-                // ❌ unfinished
-                if (!isDone) {
-                    unfinished++;
-                }
-
-                // ✅ finished THIS WEEK
-                if (isDone && task.created_at) {
-                    const created = new Date(task.created_at);
-                    if (created >= start) {
-                        finished++;
-                    }
-                }
-
-                // 💀 deadlines THIS WEEK
-                if (task.deadline) {
-                    const d = new Date(task.deadline);
-
-                    const end = new Date(start);
-                    end.setDate(start.getDate() + 7);
-
-                    if (d >= start && d <= end) {
-                        deadlines++;
-                    }
-                }
-            });
-
-            /** remove if it fails **/
-            await supabase
-            .from("stats")
-            .update({
-                tasks_finished: finished,
-                tasks_unfinished: unfinished,
-                deadlines: deadlines
-            })
-            .eq("role", user.role);
-            //until here
-
-            // update UI
-            document.getElementById("statFinished").innerText = finished;
-            document.getElementById("statUnfinished").innerText = unfinished;
-            document.getElementById("statDeadlines").innerText = deadlines;
-        }
-
-        async function submitTask() {
-            const title = document.getElementById('taskTitle').value.trim();
-            const desc = document.getElementById('taskDesc').value.trim();
-            const dateLocal = document.getElementById('taskDate').value;
-            const deadline = dateLocal ? new Date(dateLocal).toISOString() : null;
-
-            if (!title) {
-                alert("Enter a title");
-                return;
-            }
-
-            // 🟡 EDIT MODE
-            if (editingTaskItem) {
-                const id = editingTaskItem.dataset.id;
-
-                const { error } = await supabase
-                    .from("tasks")
-                    .update({
-                        title: title,
-                        description: desc,
-                        deadline: deadline
-                    })
-                    .eq("id", id);
-
-                if (error) console.log(error);
-
-                editingTaskItem = null;
-                closePanel();
-                loadTasks();
-                return;
-            }
-
-            // 🟢 CREATE MODE
-            const { error } = await supabase
-                .from("tasks")
-                .insert([{
-                    title: title,
-                    description: desc,
-                    deadline: deadline,
-                    created_at: new Date().toISOString(),
-                    donebybf: false,
-                    donebygf: false,
-                }]);
-
-            if (error) {
-                console.log(error);
-                return;
-            }
-
-            closePanel();
-            loadTasks();
-            loadStats();
-        }
-
-        async function deleteTask(button, id) {
-            await supabase
-                .from("tasks")
-                .delete()
-                .eq("id", id);
-
-            button.closest('.task-item').remove();
-            loadStats();
-        }
-
-        async function editTask(button, id) {
-            const item = button.closest('.task-item');
-            const taskId = id || item?.dataset?.id;
-            if (!taskId) return;
-
-            const { data, error } = await supabase
-                .from("tasks")
-                .select("*")
-                .eq("id", taskId)
-                .single();
-
-            if (error) {
-                console.log(error);
-                return;
-            }
-
-            editingTaskItem = item;
-
-            document.getElementById('taskTitle').value = data.title;
-            document.getElementById('taskDesc').value = data.description || "";
-            document.getElementById('taskDate').value = data.deadline ? toLocalDatetimeInput(new Date(data.deadline)) : "";
-
-            openPanel(item);
-        }
-
-        // Expose module functions to inline `onclick` attributes
-        window.openPanel = openPanel;
-        window.closePanel = closePanel;
-        window.handleOverlayClick = handleOverlayClick;
-        window.toggleTask = toggleTask;
-        window.submitTask = submitTask;
-        window.deleteTask = deleteTask;
-        window.editTask = editTask;
-
-        document.querySelectorAll('.see-all').forEach(el => {
-            if (el.textContent.includes('Add new')) el.addEventListener('click', () => openPanel());
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closePanel();
-        });
-
-        setInterval(() => {
-            fetch(`https://wfsnvttpktwwelsjghqf.supabase.co/rest/v1/users?id=eq.${user.id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "apikey": "sb_publishable_ymCf8rQ5UaHKzOLSa_5srA_R-g9thvB"
-                },
-                body: JSON.stringify({
-                    last_seen: new Date().toISOString(),
-                    online: true
-                })
-            });
-        }, 10000); // every 10 seconds
-
-        function isOnline(lastSeen) {
-            const now = new Date();
-            const last = new Date(lastSeen);
-
-            return (now - last) < 30000; // 30 seconds
-        }
-    </script>
+updatePartnerStatus(); updateOnlineStatus(); loadTasks(); loadStats()
+setInterval(updatePartnerStatus,3000); setInterval(updateOnlineStatus,10000)
+</script>
 </body>
 </html>
