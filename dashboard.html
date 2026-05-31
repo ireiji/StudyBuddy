@@ -329,10 +329,32 @@ function updateOnlineStatus() {
 }
 
 // ── MATRIX STATE ──
-const MATRIX_KEY = `matrix_sb`
 let matrixMap = {}
-try { matrixMap = JSON.parse(localStorage.getItem(MATRIX_KEY))||{} } catch(e) { matrixMap={} }
-function saveMatrix() { localStorage.setItem(MATRIX_KEY, JSON.stringify(matrixMap)) }
+
+async function loadMatrix() {
+    const { data, error } = await supabase
+        .from('matrix')
+        .select('task_id, quadrant')
+        .eq('role', user.role)   // ← only fetch your own
+    if (error) { console.log(error); return }
+    matrixMap = {}
+    data.forEach(row => { matrixMap[row.task_id] = row.quadrant })
+}
+
+async function saveMatrixEntry(taskId, quadrant) {
+    await supabase.from('matrix').upsert(
+        { task_id: taskId, quadrant, role: user.role },  // ← include role
+        { onConflict: 'task_id,role' }                   // ← conflict on both columns
+    )
+}
+
+async function deleteMatrixEntry(taskId) {
+    await supabase
+        .from('matrix')
+        .delete()
+        .eq('task_id', taskId)
+        .eq('role', user.role)   // ← only delete your own row
+}
 
 let allTasks = []
 
@@ -434,7 +456,7 @@ function addToMatrix(taskId, quadrant) {
     if (matrixMap[tid] === quadrant) return
     const oldQ = matrixMap[tid]
     matrixMap[tid] = quadrant
-    saveMatrix()
+    saveMatrixEntry(tid, quadrant)
 
     // dim in task list
     const listItem = document.querySelector(`#taskList .task-item[data-id="${tid}"]`)
@@ -463,7 +485,7 @@ function removeFromMatrix(taskId) {
     const oldQ = matrixMap[tid]
     if (!oldQ) return
     delete matrixMap[tid]
-    saveMatrix()
+    deleteMatrixEntry(tid)
 
     // un-dim in task list
     const listItem = document.querySelector(`#taskList .task-item[data-id="${tid}"]`)
@@ -705,6 +727,7 @@ async function loadTasks() {
     const {data,error} = await supabase.from("tasks").select("*").order("created_at",{ascending:false})
     if(error){console.log(error);return}
     allTasks = data
+    await loadMatrix()
     renderTaskList()
     renderMatrix()
 }
@@ -760,7 +783,7 @@ async function submitTask() {
 
 async function deleteTask(button, id) {
     const tid=String(id)
-    if(matrixMap[tid]){delete matrixMap[tid];saveMatrix()}
+    delete matrixMap[tid]
     await supabase.from("tasks").delete().eq("id",id)
     button.closest('.task-item').remove()
     allTasks=allTasks.filter(t=>String(t.id)!==tid)
