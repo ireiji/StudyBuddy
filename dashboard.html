@@ -318,7 +318,149 @@
         .status-modal textarea:focus { border-color: rgba(108,142,244,.5); box-shadow: 0 0 0 3px rgba(108,142,244,.1); }
         .status-char-count { font-size: 11px; color: #636882; text-align: right; margin-top: -8px; }
         .status-modal-footer { display: flex; gap: 10px; }
-    </style>
+   
+        /* ── NOTES PANE ── */
+        .notes-card { min-height: 400px; max-height: 600px; display: flex; flex-direction: column; }
+
+        .notes-toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px; flex-shrink: 0; gap: 8px;
+        }
+        .notes-view-toggle {
+            display: flex; gap: 4px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid #222636;
+            border-radius: 8px; padding: 3px;
+        }
+        .view-btn {
+            padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+            border: none; background: none; color: #636882; cursor: pointer;
+            transition: background .15s, color .15s;
+        }
+        .view-btn.active { background: rgba(108,142,244,.2); color: #6c8ef4; }
+
+        .notes-add-btn {
+            padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+            background: rgba(108,142,244,.12); border: 1px solid rgba(108,142,244,.25);
+            color: #6c8ef4; cursor: pointer; font-family: 'DM Sans', sans-serif;
+            transition: background .2s; white-space: nowrap;
+        }
+        .notes-add-btn:hover { background: rgba(108,142,244,.22); }
+
+        .notes-body { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; scrollbar-width: thin; scrollbar-color: #222636 transparent; }
+        .notes-body::-webkit-scrollbar { width: 4px; }
+        .notes-body::-webkit-scrollbar-thumb { background: #222636; border-radius: 2px; }
+
+        /* ── ACCORDION ── */
+        .subject-block { border: 1px solid #222636; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+        .subject-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 14px; cursor: pointer;
+            background: rgba(255,255,255,.02);
+            transition: background .15s;
+        }
+        .subject-header:hover { background: rgba(255,255,255,.05); }
+        .subject-chevron { font-size: 11px; color: #636882; transition: transform .2s; flex-shrink: 0; }
+        .subject-block.open .subject-chevron { transform: rotate(90deg); }
+        .subject-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .subject-actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .icon-action {
+            width: 22px; height: 22px; border-radius: 5px; display: grid; place-items: center;
+            font-size: 12px; cursor: pointer; border: none; background: none; color: #636882;
+            transition: background .15s, color .15s;
+        }
+        .icon-action:hover { background: rgba(255,255,255,.08); color: #e8eaf0; }
+        .icon-action.del:hover { background: rgba(248,113,113,.15); color: #f87171; }
+
+        .subject-body { padding: 0 10px 10px; background: rgba(0,0,0,.15); }
+
+        .lesson-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 10px; border-radius: 8px; cursor: pointer;
+            transition: background .15s; margin-top: 4px;
+        }
+        .lesson-row:hover { background: rgba(255,255,255,.04); }
+        .lesson-dot { width: 6px; height: 6px; border-radius: 50%; background: #636882; flex-shrink: 0; }
+        .lesson-title { font-size: 12.5px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lesson-count { font-size: 11px; color: #636882; flex-shrink: 0; }
+
+        .add-lesson-btn {
+            display: flex; align-items: center; gap: 6px; padding: 7px 10px;
+            border-radius: 8px; margin-top: 4px; cursor: pointer;
+            background: none; border: 1px dashed rgba(255,255,255,.1);
+            color: #636882; font-size: 12px; font-family: 'DM Sans', sans-serif;
+            width: 100%; transition: border-color .2s, color .2s;
+        }
+        .add-lesson-btn:hover { border-color: rgba(108,142,244,.4); color: #6c8ef4; }
+
+        /* ── DRILL-DOWN ── */
+        .drill-breadcrumb {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+            font-size: 12px; color: #636882; flex-shrink: 0;
+        }
+        .breadcrumb-item { cursor: pointer; transition: color .15s; }
+        .breadcrumb-item:hover { color: #e8eaf0; }
+        .breadcrumb-sep { font-size: 10px; }
+        .breadcrumb-item.current { color: #e8eaf0; font-weight: 600; cursor: default; }
+
+        .drill-list { display: flex; flex-direction: column; gap: 6px; }
+        .drill-item {
+            display: flex; align-items: center; gap: 10px; padding: 11px 14px;
+            border: 1px solid #222636; border-radius: 10px; cursor: pointer;
+            transition: border-color .2s, background .15s;
+        }
+        .drill-item:hover { border-color: rgba(108,142,244,.3); background: rgba(108,142,244,.04); }
+        .drill-item-icon { font-size: 16px; flex-shrink: 0; }
+        .drill-item-title { font-size: 13px; font-weight: 500; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .drill-item-meta { font-size: 11px; color: #636882; flex-shrink: 0; }
+
+        /* ── NOTES LIST (inside lesson) ── */
+        .note-item {
+            display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+            border: 1px solid #222636; border-radius: 8px; margin-bottom: 6px;
+            transition: border-color .2s;
+        }
+        .note-item:hover { border-color: rgba(108,142,244,.25); }
+        .note-icon { font-size: 18px; flex-shrink: 0; }
+        .note-title { font-size: 12.5px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-open-btn {
+            padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+            background: rgba(108,142,244,.1); border: 1px solid rgba(108,142,244,.2);
+            color: #6c8ef4; cursor: pointer; text-decoration: none; flex-shrink: 0;
+            transition: background .15s;
+        }
+        .note-open-btn:hover { background: rgba(108,142,244,.2); }
+
+        .add-note-area {
+            border: 1px dashed rgba(255,255,255,.12); border-radius: 10px; padding: 14px;
+            margin-top: 8px;
+        }
+        .add-note-area label { font-size: 11px; color: #636882; text-transform: uppercase; font-weight: 600; letter-spacing: .04em; display: block; margin-bottom: 6px; }
+        .note-input { width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 8px; padding: 9px 12px; color: #e8eaf0; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; margin-bottom: 8px; transition: border-color .2s; }
+        .note-input:focus { border-color: rgba(108,142,244,.4); }
+        .note-input::placeholder { color: #636882; }
+        .note-type-row { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .type-chip { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); color: #636882; transition: all .15s; }
+        .type-chip.selected { background: rgba(108,142,244,.15); border-color: rgba(108,142,244,.4); color: #6c8ef4; }
+        .note-file-input { display: none; }
+        .note-upload-btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #e8eaf0; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .2s; }
+        .note-upload-btn:hover { background: rgba(255,255,255,.1); }
+        .note-link-input { width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 8px; padding: 9px 12px; color: #e8eaf0; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color .2s; }
+        .note-link-input:focus { border-color: rgba(108,142,244,.4); }
+        .note-link-input::placeholder { color: #636882; }
+        .note-save-btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; background: linear-gradient(135deg,#6c8ef4,#a78bfa); border: none; color: #fff; cursor: pointer; font-family: 'Syne', sans-serif; margin-top: 8px; transition: opacity .2s; }
+        .note-save-btn:hover { opacity: .88; }
+
+        .empty-hint { text-align: center; padding: 24px 0; color: #636882; font-size: 13px; }
+
+        /* ── INLINE EDIT INPUT ── */
+        .inline-edit {
+            background: rgba(255,255,255,.05); border: 1px solid rgba(108,142,244,.4);
+            border-radius: 6px; padding: 4px 8px; color: #e8eaf0;
+            font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+            width: 100%;
+        }
+   </style>
 </head>
 <body>
 <div class="main">
@@ -404,8 +546,25 @@
                 </div>
             </div>
 
-            <!-- BLANK CARD -->
-            <div class="card"></div>
+            <!-- NOTES PANE -->
+            <div class="card notes-card">
+                <div class="card-title" style="margin-bottom:4px;">
+                    Class Notes
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <div class="notes-view-toggle">
+                            <button class="view-btn active" id="viewAccordion" onclick="setView('accordion')">≡ Accordion</button>
+                            <button class="view-btn" id="viewDrill" onclick="setView('drill')">› Drill-down</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notes-toolbar">
+                    <span style="font-size:11px;color:#636882;" id="notesSubtitle">Your shared class notes</span>
+                    <button class="notes-add-btn" id="notesAddBtn" onclick="notesAddTop()">+ Add Subject</button>
+                </div>
+
+                <div class="notes-body" id="notesBody"></div>
+            </div>
 
         </div>
 
@@ -862,6 +1021,400 @@ window.saveStatus=saveStatus
 
 document.getElementById('addNewBtn').addEventListener('click',()=>openPanel())
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){closePanel();closeStatusModal()} })
+
+// ══════════════════════════════════════
+// ── CLASS NOTES PANE ──
+// ══════════════════════════════════════
+
+let notesView = 'accordion'   // 'accordion' | 'drill'
+let drillLevel = 'subjects'   // 'subjects' | 'lessons' | 'notes'
+let drillSubject = null        // { id, title }
+let drillLesson  = null        // { id, title }
+
+let allSubjects = []
+let allLessons  = {}   // { subjectId: [...lessons] }
+let allNotes    = {}   // { lessonId:  [...notes]   }
+
+// ── icons by file type ──
+function noteIcon(type) {
+    return {pdf:'📄',word:'📝',image:'🖼️',link:'🔗'}[type] || '📎'
+}
+
+// ── VIEW TOGGLE ──
+window.setView = function(v) {
+    notesView = v
+    document.getElementById('viewAccordion').classList.toggle('active', v==='accordion')
+    document.getElementById('viewDrill').classList.toggle('active', v==='drill')
+    drillLevel='subjects'; drillSubject=null; drillLesson=null
+    renderNotes()
+}
+
+// ── TOP-LEVEL ADD BUTTON ──
+window.notesAddTop = function() {
+    if (notesView==='accordion' || drillLevel==='subjects') addSubjectInline()
+    else if (drillLevel==='lessons') addLessonInline(drillSubject.id)
+    else if (drillLevel==='notes') showAddNoteForm(drillLesson.id)
+}
+
+// ── LOAD ALL DATA ──
+async function loadNotes() {
+    const { data: subs } = await supabase.from('subjects').select('*').order('created_at')
+    allSubjects = subs || []
+
+    const { data: les } = await supabase.from('lessons').select('*').order('created_at')
+    allLessons = {}
+    ;(les||[]).forEach(l => {
+        if (!allLessons[l.subject_id]) allLessons[l.subject_id] = []
+        allLessons[l.subject_id].push(l)
+    })
+
+    const { data: nts } = await supabase.from('notes').select('*').order('created_at')
+    allNotes = {}
+    ;(nts||[]).forEach(n => {
+        if (!allNotes[n.lesson_id]) allNotes[n.lesson_id] = []
+        allNotes[n.lesson_id].push(n)
+    })
+
+    renderNotes()
+}
+
+// ── MASTER RENDER ──
+function renderNotes() {
+    const body = document.getElementById('notesBody')
+    const addBtn = document.getElementById('notesAddBtn')
+    const subtitle = document.getElementById('notesSubtitle')
+
+    if (notesView === 'accordion') {
+        addBtn.textContent = '+ Add Subject'
+        subtitle.textContent = 'Your shared class notes'
+        renderAccordion(body)
+    } else {
+        renderDrill(body, addBtn, subtitle)
+    }
+}
+
+// ════════════════════════════
+// ACCORDION VIEW
+// ════════════════════════════
+function renderAccordion(body) {
+    body.innerHTML = ''
+    if (!allSubjects.length) {
+        body.innerHTML = '<div class="empty-hint">No subjects yet — add one above</div>'
+        return
+    }
+    allSubjects.forEach(sub => {
+        const lessons = allLessons[sub.id] || []
+        const block = document.createElement('div')
+        block.className = 'subject-block'
+        block.dataset.id = sub.id
+
+        block.innerHTML = `
+            <div class="subject-header">
+                <span class="subject-chevron">▶</span>
+                <span class="subject-title">${sub.title}</span>
+                <div class="subject-actions">
+                    <button class="icon-action" title="Edit" data-edit-sub="${sub.id}">✎</button>
+                    <button class="icon-action del" title="Delete" data-del-sub="${sub.id}">✕</button>
+                </div>
+            </div>
+            <div class="subject-body" style="display:none;">
+                <div class="lessons-list" id="lessons-${sub.id}"></div>
+                <button class="add-lesson-btn" data-add-lesson="${sub.id}">＋ Add lesson</button>
+            </div>
+        `
+
+        const header = block.querySelector('.subject-header')
+        const subBody = block.querySelector('.subject-body')
+
+        header.addEventListener('click', e => {
+            if (e.target.closest('.subject-actions')) return
+            const open = block.classList.toggle('open')
+            subBody.style.display = open ? 'block' : 'none'
+            if (open) renderLessonsAccordion(sub.id)
+        })
+
+        block.querySelector(`[data-edit-sub]`).addEventListener('click', e => { e.stopPropagation(); editSubjectInline(block, sub) })
+        block.querySelector(`[data-del-sub]`).addEventListener('click', e => { e.stopPropagation(); deleteSubject(sub.id) })
+        block.querySelector(`[data-add-lesson]`).addEventListener('click', () => addLessonInline(sub.id))
+
+        body.appendChild(block)
+    })
+}
+
+function renderLessonsAccordion(subId) {
+    const list = document.getElementById(`lessons-${subId}`)
+    if (!list) return
+    list.innerHTML = ''
+    const lessons = allLessons[subId] || []
+    if (!lessons.length) { list.innerHTML = '<div style="padding:8px 10px;font-size:12px;color:#636882;">No lessons yet</div>'; return }
+    lessons.forEach(les => {
+        const noteCount = (allNotes[les.id]||[]).length
+        const row = document.createElement('div')
+        row.className = 'lesson-row'
+        row.innerHTML = `
+            <span class="lesson-dot"></span>
+            <span class="lesson-title">${les.title}</span>
+            <span class="lesson-count">${noteCount} note${noteCount!==1?'s':''}</span>
+            <button class="icon-action" style="margin-left:4px;" data-edit-les="${les.id}">✎</button>
+            <button class="icon-action del" data-del-les="${les.id}">✕</button>
+            <button class="icon-action" data-open-les="${les.id}" title="Open notes">↗</button>
+        `
+        row.querySelector(`[data-edit-les]`).addEventListener('click', e => { e.stopPropagation(); editLessonInline(row, les) })
+        row.querySelector(`[data-del-les]`).addEventListener('click',  e => { e.stopPropagation(); deleteLesson(les.id, subId) })
+        row.querySelector(`[data-open-les]`).addEventListener('click', e => {
+            e.stopPropagation()
+            drillSubject = allSubjects.find(s=>s.id===subId)
+            drillLesson  = les
+            drillLevel   = 'notes'
+            setView('drill')
+        })
+        row.addEventListener('click', () => {
+            drillSubject = allSubjects.find(s=>s.id===subId)
+            drillLesson  = les
+            drillLevel   = 'notes'
+            setView('drill')
+        })
+        list.appendChild(row)
+    })
+}
+
+// ════════════════════════════
+// DRILL-DOWN VIEW
+// ════════════════════════════
+function renderDrill(body, addBtn, subtitle) {
+    body.innerHTML = ''
+
+    // breadcrumb
+    const bc = document.createElement('div')
+    bc.className = 'drill-breadcrumb'
+
+    if (drillLevel === 'subjects') {
+        addBtn.textContent = '+ Add Subject'
+        subtitle.textContent = 'All subjects'
+        bc.innerHTML = '<span class="breadcrumb-item current">Subjects</span>'
+        renderDrillSubjects(body)
+    } else if (drillLevel === 'lessons') {
+        addBtn.textContent = '+ Add Lesson'
+        subtitle.textContent = drillSubject.title
+        bc.innerHTML = `
+            <span class="breadcrumb-item" id="bc-subjects">Subjects</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-item current">${drillSubject.title}</span>
+        `
+        renderDrillLessons(body)
+    } else {
+        addBtn.textContent = '+ Add Note'
+        subtitle.textContent = drillLesson.title
+        bc.innerHTML = `
+            <span class="breadcrumb-item" id="bc-subjects">Subjects</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-item" id="bc-lessons">${drillSubject.title}</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-item current">${drillLesson.title}</span>
+        `
+        renderDrillNotes(body)
+    }
+
+    body.prepend(bc)
+
+    bc.querySelector('#bc-subjects')?.addEventListener('click', () => { drillLevel='subjects'; drillSubject=null; drillLesson=null; renderNotes() })
+    bc.querySelector('#bc-lessons')?.addEventListener('click',  () => { drillLevel='lessons'; drillLesson=null; renderNotes() })
+}
+
+function renderDrillSubjects(body) {
+    if (!allSubjects.length) { body.innerHTML += '<div class="empty-hint">No subjects yet</div>'; return }
+    const list = document.createElement('div'); list.className='drill-list'; body.appendChild(list)
+    allSubjects.forEach(sub => {
+        const lesCount = (allLessons[sub.id]||[]).length
+        const item = document.createElement('div'); item.className='drill-item'
+        item.innerHTML = `
+            <span class="drill-item-icon">📚</span>
+            <span class="drill-item-title">${sub.title}</span>
+            <span class="drill-item-meta">${lesCount} lesson${lesCount!==1?'s':''}</span>
+            <button class="icon-action" data-edit-sub="${sub.id}">✎</button>
+            <button class="icon-action del" data-del-sub="${sub.id}">✕</button>
+        `
+        item.querySelector('[data-edit-sub]').addEventListener('click', e => { e.stopPropagation(); editSubjectInline(item, sub) })
+        item.querySelector('[data-del-sub]').addEventListener('click',  e => { e.stopPropagation(); deleteSubject(sub.id) })
+        item.addEventListener('click', e => {
+            if (e.target.closest('.icon-action')) return
+            drillSubject=sub; drillLevel='lessons'; renderNotes()
+        })
+        list.appendChild(item)
+    })
+}
+
+function renderDrillLessons(body) {
+    const lessons = allLessons[drillSubject.id] || []
+    if (!lessons.length) { body.innerHTML += '<div class="empty-hint">No lessons yet</div>'; return }
+    const list = document.createElement('div'); list.className='drill-list'; body.appendChild(list)
+    lessons.forEach(les => {
+        const noteCount = (allNotes[les.id]||[]).length
+        const item = document.createElement('div'); item.className='drill-item'
+        item.innerHTML = `
+            <span class="drill-item-icon">📖</span>
+            <span class="drill-item-title">${les.title}</span>
+            <span class="drill-item-meta">${noteCount} note${noteCount!==1?'s':''}</span>
+            <button class="icon-action" data-edit-les="${les.id}">✎</button>
+            <button class="icon-action del" data-del-les="${les.id}">✕</button>
+        `
+        item.querySelector('[data-edit-les]').addEventListener('click', e => { e.stopPropagation(); editLessonInline(item, les) })
+        item.querySelector('[data-del-les]').addEventListener('click',  e => { e.stopPropagation(); deleteLesson(les.id, drillSubject.id) })
+        item.addEventListener('click', e => {
+            if (e.target.closest('.icon-action')) return
+            drillLesson=les; drillLevel='notes'; renderNotes()
+        })
+        list.appendChild(item)
+    })
+}
+
+function renderDrillNotes(body) {
+    const notes = allNotes[drillLesson.id] || []
+    notes.forEach(note => {
+        const item = document.createElement('div'); item.className='note-item'
+        item.innerHTML = `
+            <span class="note-icon">${noteIcon(note.file_type)}</span>
+            <span class="note-title">${note.title}</span>
+            <a class="note-open-btn" href="${note.url}" target="_blank" rel="noopener">Open</a>
+            <button class="icon-action del" data-del-note="${note.id}" style="margin-left:4px;">✕</button>
+        `
+        item.querySelector('[data-del-note]').addEventListener('click', () => deleteNote(note.id))
+        body.appendChild(item)
+    })
+    showAddNoteForm(drillLesson.id, body)
+}
+
+// ════════════════════════════
+// ADD NOTE FORM
+// ════════════════════════════
+function showAddNoteForm(lessonId, container) {
+    const body = container || document.getElementById('notesBody')
+    const area = document.createElement('div'); area.className='add-note-area'
+    let selectedType = 'null'
+    let selectedFile = null
+
+  
+area.innerHTML = `
+    <label>Add a note</label>
+    <input class="note-input" id="noteTitle" placeholder="Note title…" />
+    <div style="margin-top:6px;">
+        <input class="note-link-input" id="noteLinkUrl" placeholder="https://docs.google.com/…" />
+    </div>
+    <button class="note-save-btn" id="noteSaveBtn">Save note</button>
+`
+
+    // save
+    // REPLACE with:
+area.querySelector('#noteSaveBtn').addEventListener('click', async () => {
+    const title = area.querySelector('#noteTitle').value.trim()
+    const url   = area.querySelector('#noteLinkUrl').value.trim()
+    if (!title) { alert('Enter a note title'); return }
+    if (!url)   { alert('Enter a URL'); return }
+
+    const { error } = await supabase.from('notes').insert([{
+        lesson_id: lessonId, title, type: 'link',
+        url, file_type: 'link', created_by: user.role
+    }])
+    if (error) { console.log(error); return }
+    await loadNotes()
+})
+
+    body.appendChild(area)
+}
+
+// ════════════════════════════
+// INLINE EDIT HELPERS
+// ════════════════════════════
+function addSubjectInline() {
+    const body = document.getElementById('notesBody')
+    const inp = document.createElement('input')
+    inp.className='inline-edit'; inp.placeholder='Subject name…'; inp.style.marginBottom='8px'
+    body.prepend(inp); inp.focus()
+    inp.addEventListener('keydown', async e => {
+        if (e.key==='Enter') {
+            const title=inp.value.trim(); if(!title)return
+            await supabase.from('subjects').insert([{title, created_by:user.role}])
+            await loadNotes()
+        }
+        if (e.key==='Escape') inp.remove()
+    })
+    inp.addEventListener('blur', ()=>{ if(!inp.value.trim()) inp.remove() })
+}
+
+function editSubjectInline(el, sub) {
+    const titleEl = el.querySelector('.subject-title,.drill-item-title')
+    const old = sub.title
+    const inp = document.createElement('input')
+    inp.className='inline-edit'; inp.value=old
+    titleEl.replaceWith(inp); inp.focus()
+    inp.addEventListener('keydown', async e => {
+        if (e.key==='Enter') {
+            const title=inp.value.trim(); if(!title)return
+            await supabase.from('subjects').update({title}).eq('id',sub.id)
+            await loadNotes()
+        }
+        if (e.key==='Escape') { inp.replaceWith(titleEl) }
+    })
+    inp.addEventListener('blur', () => { inp.replaceWith(titleEl) })
+}
+
+function addLessonInline(subId) {
+    const list = document.getElementById(`lessons-${subId}`)
+    const fallback = document.getElementById('notesBody')
+    const target = list || fallback
+
+    const inp = document.createElement('input')
+    inp.className='inline-edit'; inp.placeholder='Lesson name…'; inp.style.marginBottom='6px'
+    target.prepend(inp); inp.focus()
+    inp.addEventListener('keydown', async e => {
+        if (e.key==='Enter') {
+            const title=inp.value.trim(); if(!title)return
+            await supabase.from('lessons').insert([{subject_id:subId, title, created_by:user.role}])
+            await loadNotes()
+        }
+        if (e.key==='Escape') inp.remove()
+    })
+    inp.addEventListener('blur', ()=>{ if(!inp.value.trim()) inp.remove() })
+}
+
+function editLessonInline(el, les) {
+    const titleEl = el.querySelector('.lesson-title,.drill-item-title')
+    const inp = document.createElement('input')
+    inp.className='inline-edit'; inp.value=les.title
+    titleEl.replaceWith(inp); inp.focus()
+    inp.addEventListener('keydown', async e => {
+        if (e.key==='Enter') {
+            const title=inp.value.trim(); if(!title)return
+            await supabase.from('lessons').update({title}).eq('id',les.id)
+            await loadNotes()
+        }
+        if (e.key==='Escape') inp.replaceWith(titleEl)
+    })
+    inp.addEventListener('blur', () => inp.replaceWith(titleEl))
+}
+
+// ════════════════════════════
+// DELETES
+// ════════════════════════════
+async function deleteSubject(id) {
+    if (!confirm('Delete this subject and all its lessons and notes?')) return
+    await supabase.from('subjects').delete().eq('id',id)
+    await loadNotes()
+}
+async function deleteLesson(id, subId) {
+    if (!confirm('Delete this lesson and all its notes?')) return
+    await supabase.from('lessons').delete().eq('id',id)
+    if (drillLevel==='notes') { drillLevel='lessons'; drillLesson=null }
+    await loadNotes()
+}
+async function deleteNote(id) {
+    await supabase.from('notes').delete().eq('id',id)
+    await loadNotes()
+}
+
+// kick off notes load
+loadNotes()
+setInterval(loadNotes, 15000)
 
 updatePartnerStatus(); updateOnlineStatus(); loadTasks(); loadStats(); loadStatuses()
 setInterval(updatePartnerStatus,3000); setInterval(updateOnlineStatus,10000); setInterval(loadStatuses,5000)
