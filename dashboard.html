@@ -460,6 +460,154 @@
             font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
             width: 100%;
         }
+
+
+        /* ── DASHBOARD PANEL LAYOUT ── */
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+        .dashboard-row + .dashboard-row,
+        .dashboard-row + .notes-full-row { margin-top: 20px; }
+        .dashboard-row > .card { min-width: 0; width: 100%; }
+        .dashboard-row .status-card { height: 400px; }
+        .notes-full-row { width: 100%; }
+        .notes-full-row .notes-card { width: 100%; max-height: 600px; }
+        @media (max-width: 900px) {
+            .dashboard-row { grid-template-columns: 1fr; }
+            .dashboard-row .status-card { height: auto; min-height: 240px; }
+        }
+
+        /* ── WEEKLY SCHEDULE ── */
+        .schedule-card { height: 400px; padding: 16px; --schedule-gutter: 58px; }
+        .schedule-title-actions { display:flex; align-items:center; gap:6px; }
+        .schedule-action-btn {
+            border: 1px solid rgba(108,142,244,.25); background: rgba(108,142,244,.10); color:#6c8ef4;
+            border-radius: 7px; padding: 5px 8px; font: 600 10.5px 'DM Sans',sans-serif; cursor:pointer;
+            transition: background .15s, border-color .15s; white-space:nowrap;
+        }
+        .schedule-action-btn:hover { background:rgba(108,142,244,.2); border-color:rgba(108,142,244,.45); }
+        .schedule-action-btn.secondary { color:#aeb4c7; border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.04); }
+        .schedule-action-btn.secondary:hover { background:rgba(255,255,255,.08); }
+        .schedule-action-btn[hidden] { display:none !important; }
+
+        .schedule-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; flex-shrink:0; }
+        .schedule-switch { display:flex; gap:3px; padding:3px; background:rgba(255,255,255,.035); border:1px solid #222636; border-radius:8px; min-width:0; }
+        .schedule-switch-btn {
+            border:0; background:transparent; color:#636882; border-radius:6px; padding:4px 8px;
+            font:600 10.5px 'DM Sans',sans-serif; cursor:pointer; max-width:105px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+        .schedule-switch-btn.active { background:rgba(108,142,244,.18); color:#8da7ff; }
+        .schedule-week-label { color:#636882; font-size:10px; margin-bottom:6px; flex-shrink:0; }
+
+        .schedule-week-head { display:grid; grid-template-columns:var(--schedule-gutter) repeat(5,minmax(70px,1fr)); min-width:440px; border-bottom:1px solid #222636; flex-shrink:0; padding-right:var(--schedule-scrollbar, 0px); }
+        .schedule-day-head { padding:5px 2px 6px; text-align:center; border-left:1px solid rgba(255,255,255,.045); }
+        .schedule-day-name { font-family:'Syne',sans-serif; font-weight:700; font-size:9.5px; text-transform:uppercase; color:#aeb4c7; letter-spacing:.04em; }
+        .schedule-day-date { font-size:9px; color:#636882; margin-top:1px; }
+        .schedule-scroll { flex:1; min-height:0; overflow:auto; position:relative; scrollbar-width:thin; scrollbar-color:#222636 transparent; }
+        .schedule-scroll::-webkit-scrollbar { width:5px; height:5px; }
+        .schedule-scroll::-webkit-scrollbar-thumb { background:#222636; border-radius:3px; }
+        .schedule-canvas { height:1440px; min-width:440px; position:relative; background:rgba(255,255,255,.008); }
+        .schedule-hour-line { position:absolute; left:var(--schedule-gutter); right:0; height:1px; background:rgba(255,255,255,.055); pointer-events:none; z-index:0; }
+        .schedule-period-line { position:absolute; left:var(--schedule-gutter); right:0; height:1px; background:rgba(108,142,244,.08); pointer-events:none; z-index:0; }
+        .schedule-time-label { position:absolute; left:0; width:calc(var(--schedule-gutter) - 7px); transform:translateY(-6px); text-align:right; padding-right:7px; font-size:8.5px; color:#555b72; pointer-events:none; z-index:1; white-space:nowrap; }
+        .schedule-days-layer { position:absolute; left:var(--schedule-gutter); right:0; top:0; bottom:0; display:grid; grid-template-columns:repeat(5,1fr); z-index:1; }
+        .schedule-day-track { position:relative; border-left:1px solid rgba(255,255,255,.045); min-width:0; }
+        .schedule-day-track:last-child { border-right:1px solid rgba(255,255,255,.045); }
+        .schedule-now-line { position:absolute; left:var(--schedule-gutter); right:0; height:1px; background:#f87171; box-shadow:0 0 5px rgba(248,113,113,.45); z-index:8; pointer-events:none; }
+
+        .schedule-block {
+            position:absolute; left:3px; right:3px; border-radius:6px; overflow:hidden; padding:4px 5px;
+            font-size:9.5px; line-height:1.12; cursor:context-menu; user-select:none;
+            box-shadow:0 3px 8px rgba(0,0,0,.18); z-index:3;
+        }
+        .schedule-class { background:rgba(108,142,244,.17); border:1px solid rgba(108,142,244,.32); color:#dce4ff; }
+        .schedule-class:hover { background:rgba(108,142,244,.24); border-color:rgba(108,142,244,.5); }
+        .schedule-break { background:rgba(255,255,255,.035); border:1px dashed rgba(255,255,255,.11); color:#777d94; z-index:2; }
+        .schedule-event { left:8%; right:2px; background:rgba(251,191,36,.16); border:1px solid rgba(251,191,36,.45); color:#fde68a; z-index:5; }
+        .schedule-event:hover { background:rgba(251,191,36,.23); }
+        .schedule-block-title { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .schedule-block-detail { font-size:8.2px; opacity:.72; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .schedule-block-time { font-size:7.8px; opacity:.62; margin-top:2px; white-space:nowrap; }
+
+        /* context menu */
+        .schedule-context {
+            position:fixed; z-index:160; min-width:170px; background:rgba(19,22,30,.98); border:1px solid rgba(255,255,255,.10);
+            border-radius:11px; padding:5px; box-shadow:0 18px 45px rgba(0,0,0,.55); backdrop-filter:blur(18px);
+            display:none;
+        }
+        .schedule-context.show { display:block; animation:ctxIn .12s ease both; }
+        @keyframes ctxIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
+        .ctx-title { padding:7px 9px 6px; font:700 11px 'Syne',sans-serif; color:#e8eaf0; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .ctx-btn { width:100%; border:0; background:none; color:#c8ccda; padding:8px 9px; border-radius:7px; text-align:left; cursor:pointer; font:12px 'DM Sans',sans-serif; }
+        .ctx-btn:hover { background:rgba(255,255,255,.06); }
+        .ctx-btn.danger { color:#f87171; }
+        .ctx-sep { height:1px; background:rgba(255,255,255,.07); margin:3px 4px; }
+
+        /* schedule/event/deadline modals */
+        .schedule-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.62); backdrop-filter:blur(4px); z-index:120; opacity:0; pointer-events:none; transition:opacity .2s; display:flex; align-items:center; justify-content:center; padding:18px; }
+        .schedule-modal-overlay.show { opacity:1; pointer-events:all; }
+        .schedule-modal { width:100%; max-width:430px; max-height:min(86vh,680px); overflow:auto; background:rgba(19,22,30,.97); border:1px solid rgba(255,255,255,.09); border-radius:18px; box-shadow:0 30px 70px rgba(0,0,0,.65); transform:scale(.96) translateY(8px); transition:transform .2s; }
+        .schedule-modal-overlay.show .schedule-modal { transform:scale(1) translateY(0); }
+        .schedule-modal .panel-body { gap:13px; }
+        .pf select { width:100%; background:#171a23; border:1px solid rgba(255,255,255,.09); border-radius:10px; padding:11px 14px; color:#e8eaf0; font-family:'DM Sans',sans-serif; font-size:14px; outline:none; color-scheme:dark; }
+        .pf select:focus { border-color:rgba(108,142,244,.5); box-shadow:0 0 0 3px rgba(108,142,244,.1); }
+        .schedule-form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .form-hint { color:#636882; font-size:10.5px; line-height:1.4; }
+        .deadline-list { display:flex; flex-direction:column; gap:7px; max-height:340px; overflow:auto; }
+        .deadline-item { border:1px solid #222636; background:rgba(255,255,255,.025); border-radius:10px; padding:10px 12px; }
+        .deadline-item-title { font-size:13px; font-weight:600; color:#e8eaf0; }
+        .deadline-item-date { font-size:10.5px; color:#636882; margin-top:3px; }
+        .deadline-empty { color:#636882; text-align:center; padding:22px 8px; font-size:12px; }
+        .task-subject-pill { max-width:85px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:9px; color:#8da7ff; background:rgba(108,142,244,.09); border:1px solid rgba(108,142,244,.16); border-radius:5px; padding:2px 5px; flex-shrink:0; }
+
+        /* ── APP NOTIFICATIONS ── */
+        .toast-stack {
+            position:fixed; top:78px; right:20px; z-index:320; width:min(360px,calc(100vw - 32px));
+            display:flex; flex-direction:column; gap:9px; pointer-events:none;
+        }
+        .app-toast {
+            display:flex; align-items:flex-start; gap:10px; padding:12px 14px;
+            background:rgba(19,22,30,.96); border:1px solid rgba(255,255,255,.10); border-radius:12px;
+            box-shadow:0 18px 48px rgba(0,0,0,.5); backdrop-filter:blur(20px); color:#e8eaf0;
+            opacity:0; transform:translateY(-8px) scale(.98); transition:opacity .2s,transform .2s;
+            pointer-events:auto;
+        }
+        .app-toast.show { opacity:1; transform:translateY(0) scale(1); }
+        .app-toast.leaving { opacity:0; transform:translateY(-6px) scale(.98); }
+        .toast-mark { width:22px; height:22px; flex:0 0 22px; border-radius:7px; display:grid; place-items:center; font-weight:800; font-size:12px; }
+        .app-toast.info .toast-mark { background:rgba(108,142,244,.15); color:#8da7ff; border:1px solid rgba(108,142,244,.25); }
+        .app-toast.success .toast-mark { background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.22); }
+        .app-toast.warning .toast-mark { background:rgba(251,191,36,.12); color:#fbbf24; border:1px solid rgba(251,191,36,.22); }
+        .app-toast.error .toast-mark { background:rgba(248,113,113,.12); color:#f87171; border:1px solid rgba(248,113,113,.22); }
+        .toast-copy { flex:1; min-width:0; font-size:12.5px; line-height:1.4; }
+        .toast-close { border:0; background:none; color:#636882; cursor:pointer; padding:0 0 0 6px; font-size:14px; line-height:1; }
+        .toast-close:hover { color:#e8eaf0; }
+
+        .app-confirm-overlay {
+            position:fixed; inset:0; z-index:310; background:rgba(0,0,0,.62); backdrop-filter:blur(5px);
+            display:flex; align-items:center; justify-content:center; padding:20px;
+            opacity:0; pointer-events:none; transition:opacity .2s;
+        }
+        .app-confirm-overlay.show { opacity:1; pointer-events:all; }
+        .app-confirm-dialog {
+            width:100%; max-width:390px; background:rgba(19,22,30,.98); border:1px solid rgba(255,255,255,.09);
+            border-radius:18px; box-shadow:0 30px 70px rgba(0,0,0,.62); padding:22px;
+            transform:scale(.96) translateY(8px); transition:transform .2s cubic-bezier(.34,1.3,.64,1);
+        }
+        .app-confirm-overlay.show .app-confirm-dialog { transform:scale(1) translateY(0); }
+        .app-confirm-title { font:800 16px 'Syne',sans-serif; color:#e8eaf0; margin-bottom:7px; }
+        .app-confirm-message { color:#8b91a8; font-size:13px; line-height:1.5; }
+        .app-confirm-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:20px; }
+        .confirm-btn { border-radius:9px; padding:9px 14px; font:600 12.5px 'DM Sans',sans-serif; cursor:pointer; }
+        .confirm-btn.cancel { color:#aeb4c7; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); }
+        .confirm-btn.cancel:hover { background:rgba(255,255,255,.08); }
+        .confirm-btn.primary { color:#fff; background:linear-gradient(135deg,#6c8ef4,#8b7cf6); border:0; }
+        .confirm-btn.danger { color:#fff; background:#c94f5f; border:0; }
+        .confirm-btn:hover { filter:brightness(1.07); }
+
    </style>
 </head>
 <body>
@@ -479,13 +627,38 @@
             <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">0</div><div class="stat-label">Deadlines this week</div></div>
         </div>
 
-        <!-- ROW 1: Tasks + Matrix -->
-        <div class="two-col">
+        <!-- ROW 1: Schedule + Tasks -->
+        <div class="dashboard-row">
+            <div class="card schedule-card">
+                <div class="card-title" style="margin-bottom:8px;">
+                    <span>Weekly Schedule</span>
+                    <div class="schedule-title-actions">
+                        <button class="schedule-action-btn secondary" id="scheduleAddClassBtn">+ Class</button>
+                        <button class="schedule-action-btn" id="scheduleAddEventBtn">+ Event</button>
+                    </div>
+                </div>
+                <div class="schedule-toolbar">
+                    <div class="schedule-switch">
+                        <button class="schedule-switch-btn active" id="scheduleMineBtn">My schedule</button>
+                        <button class="schedule-switch-btn" id="schedulePartnerBtn">Partner</button>
+                    </div>
+                    <span class="schedule-week-label" id="scheduleModeHint">Editable</span>
+                </div>
+                <div class="schedule-week-label" id="scheduleWeekLabel"></div>
+                <div class="schedule-week-head" id="scheduleWeekHead"></div>
+                <div class="schedule-scroll" id="scheduleScroll">
+                    <div class="schedule-canvas" id="scheduleCanvas"></div>
+                </div>
+            </div>
+
             <div class="card task-card">
                 <div class="card-title">Today's Tasks <span class="see-all" id="addNewBtn">Add new +</span></div>
                 <div class="task-list" id="taskList"></div>
             </div>
+        </div>
 
+        <!-- ROW 2: Eisenhower Matrix + Status Notes -->
+        <div class="dashboard-row">
             <div class="card matrix-card" style="gap:0;">
                 <div class="card-title" style="margin-bottom:4px;">Eisenhower Matrix</div>
                 <p class="matrix-subtitle">Drag tasks into a quadrant · double-tap to remove</p>
@@ -512,17 +685,10 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ROW 2: Status + Blank -->
-        <div class="two-col" style="margin-top: 20px;">
-
-            <!-- STATUS CARD -->
             <div class="card status-card">
                 <div class="card-title" style="margin-bottom:4px;">Status Notes</div>
-
                 <div class="status-notes-row">
-                    <!-- ME (left) -->
                     <div class="status-person" id="myPerson">
                         <div class="status-bubble mine empty-mine" id="myBubble">
                             <span id="myStatusText" class="status-empty-text">Tap to add a note…</span>
@@ -532,8 +698,6 @@
                             <span class="status-name">You</span>
                         </div>
                     </div>
-
-                    <!-- PARTNER (right) -->
                     <div class="status-person" id="partnerPerson">
                         <div class="status-bubble" id="partnerBubble">
                             <span id="partnerStatusText" class="status-empty-text">No note yet</span>
@@ -545,8 +709,10 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- NOTES PANE -->
+        <!-- ROW 3: Class Notes -->
+        <div class="notes-full-row">
             <div class="card notes-card">
                 <div class="card-title" style="margin-bottom:4px;">
                     Class Notes
@@ -557,15 +723,12 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="notes-toolbar">
                     <span style="font-size:11px;color:#636882;" id="notesSubtitle">Your shared class notes</span>
                     <button class="notes-add-btn" id="notesAddBtn" onclick="notesAddTop()">+ Add Subject</button>
                 </div>
-
                 <div class="notes-body" id="notesBody"></div>
             </div>
-
         </div>
 
     </div><!-- /.content -->
@@ -581,11 +744,99 @@
         <div class="panel-body">
             <div class="pf"><label>Task title</label><input type="text" id="taskTitle" placeholder="e.g. Finish assignment" /></div>
             <div class="pf"><label>Description</label><textarea id="taskDesc" rows="3" placeholder="Add some context or notes…"></textarea></div>
+            <div class="pf"><label>Subject</label><select id="taskSubject"><option value="">No subject</option></select></div>
             <div class="pf"><label>Due date &amp; time</label><input type="datetime-local" id="taskDate" class="date-input" /></div>
         </div>
         <div class="panel-footer">
             <button class="btn-cancel" onclick="closePanel()">Cancel</button>
             <button class="btn-add" id="panelSubmitBtn" onclick="submitTask()">Add Task</button>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Schedule Class Modal -->
+<div class="schedule-modal-overlay" id="classModalOverlay">
+    <div class="schedule-modal">
+        <div class="panel-header">
+            <h2 id="classModalTitle">✦ Add Class</h2>
+            <button class="panel-close" id="classModalClose">✕</button>
+        </div>
+        <div class="panel-body">
+            <div class="pf"><label>Subject</label><select id="classSubjectSelect"></select></div>
+            <div class="pf" id="newSubjectWrap" style="display:none;"><label>New subject name</label><input id="classNewSubject" placeholder="e.g. Computer Science" /></div>
+            <div class="pf"><label>Display title</label><input id="classDisplayTitle" placeholder="What appears on the schedule" /></div>
+            <div class="pf"><label>Room / details</label><input id="classDetail" placeholder="Optional" /></div>
+            <div class="pf"><label>Day</label>
+                <select id="classDay">
+                    <option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option>
+                </select>
+            </div>
+            <div class="schedule-form-row">
+                <div class="pf"><label>Start</label><input type="time" id="classStart" /></div>
+                <div class="pf"><label>End</label><input type="time" id="classEnd" /></div>
+            </div>
+            <div class="form-hint">Recurring classes repeat every week. Your partner can view them, but only you can edit your own schedule.</div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn-cancel" id="classCancelBtn">Cancel</button>
+            <button class="btn-add" id="classSaveBtn">Save Class</button>
+        </div>
+    </div>
+</div>
+
+<!-- Dated Event Modal -->
+<div class="schedule-modal-overlay" id="eventModalOverlay">
+    <div class="schedule-modal">
+        <div class="panel-header">
+            <h2 id="eventModalTitle">✦ Add Event</h2>
+            <button class="panel-close" id="eventModalClose">✕</button>
+        </div>
+        <div class="panel-body">
+            <div class="pf"><label>Event title</label><input id="eventTitle" placeholder="e.g. Basketball practice" /></div>
+            <div class="pf"><label>Description</label><textarea id="eventDescription" rows="3" placeholder="Optional details…"></textarea></div>
+            <div class="pf"><label>Date</label><input type="date" id="eventDate" class="date-input" /></div>
+            <div class="schedule-form-row">
+                <div class="pf"><label>Start</label><input type="time" id="eventStart" /></div>
+                <div class="pf"><label>End</label><input type="time" id="eventEnd" /></div>
+            </div>
+            <div class="form-hint">Events may use any time from 12:00 AM to 11:59 PM. Only events in the current week are overlaid on this panel.</div>
+        </div>
+        <div class="panel-footer">
+            <button class="btn-cancel" id="eventCancelBtn">Cancel</button>
+            <button class="btn-add" id="eventSaveBtn">Save Event</button>
+        </div>
+    </div>
+</div>
+
+<!-- Subject Deadlines Modal -->
+<div class="schedule-modal-overlay" id="deadlinesModalOverlay">
+    <div class="schedule-modal">
+        <div class="panel-header">
+            <h2 id="deadlinesModalTitle">Deadlines</h2>
+            <button class="panel-close" id="deadlinesModalClose">✕</button>
+        </div>
+        <div class="panel-body">
+            <div class="form-hint" id="deadlinesRoleHint"></div>
+            <div class="deadline-list" id="deadlinesList"></div>
+        </div>
+        <div class="panel-footer"><button class="btn-cancel" id="deadlinesCloseBtn">Close</button></div>
+    </div>
+</div>
+
+<!-- Schedule right-click menu -->
+<div class="schedule-context" id="scheduleContext"></div>
+
+<!-- App notifications -->
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+<div class="app-confirm-overlay" id="appConfirmOverlay" role="dialog" aria-modal="true" aria-labelledby="appConfirmTitle">
+    <div class="app-confirm-dialog">
+        <div class="app-confirm-title" id="appConfirmTitle">Are you sure?</div>
+        <div class="app-confirm-message" id="appConfirmMessage"></div>
+        <div class="app-confirm-actions">
+            <button class="confirm-btn cancel" id="appConfirmCancel">Cancel</button>
+            <button class="confirm-btn danger" id="appConfirmAccept">Delete</button>
         </div>
     </div>
 </div>
@@ -631,6 +882,8 @@ async function updatePartnerStatus() {
     if (error||!users?.length) return
     const p = users[0]
     partnername.innerText = p.username
+    const partnerScheduleBtn=document.getElementById('schedulePartnerBtn')
+    if(partnerScheduleBtn) partnerScheduleBtn.textContent=`${p.username}'s schedule`
     const on = isOnline(p.last_seen)
     partnerstatus.innerText = on?"online":"offline"
     partnerstatus.style.color = on?"#4ade80":"#f87171"
@@ -638,6 +891,348 @@ async function updatePartnerStatus() {
 function updateOnlineStatus() {
     fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}`,{method:"PATCH",headers:{"Content-Type":"application/json","apikey":supabaseKey},body:JSON.stringify({last_seen:new Date().toISOString(),online:true})})
 }
+
+
+// ══════════════════════════════════════
+// ── WEEKLY SCHEDULE ──
+// ══════════════════════════════════════
+const partnerRole = isBF ? 'gf' : 'bf'
+const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday']
+const PIXELS_PER_MINUTE = 1
+const PERIOD_STARTS = ['07:30','08:20','09:10','10:00','10:20','11:10','12:00','13:00','13:50','14:40','14:50','15:40','16:30']
+let scheduleViewRole = user.role
+let scheduleSubjects = []
+let scheduleClasses = []
+let scheduleEvents = []
+let editingScheduleClass = null
+let editingScheduleEvent = null
+let scheduleAutoScrolled = false
+
+function localDateKey(d) {
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0')
+    return `${y}-${m}-${day}`
+}
+function weekMonday(base=new Date()) {
+    const d=new Date(base); d.setHours(0,0,0,0)
+    const day=d.getDay(); d.setDate(d.getDate() + (day===0 ? -6 : 1-day))
+    return d
+}
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x }
+function timeToMinutes(t) {
+    if(!t) return 0
+    const [h,m]=String(t).slice(0,5).split(':').map(Number)
+    return h*60+m
+}
+function minutesToTime(mins) {
+    const h=Math.floor(mins/60), m=mins%60
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`
+}
+function prettyTime(t) {
+    const mins=timeToMinutes(t), h=Math.floor(mins/60), m=mins%60, ap=h>=12?'PM':'AM', h12=(h%12)||12
+    return `${h12}:${String(m).padStart(2,'0')} ${ap}`
+}
+function escapeHtml(value='') {
+    return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
+}
+
+function notify(message,type='info',duration=3200) {
+    const stack=document.getElementById('toastStack'); if(!stack)return
+    const marks={success:'✓',error:'!',warning:'!',info:'i'}
+    const toast=document.createElement('div')
+    toast.className=`app-toast ${type}`
+    toast.innerHTML=`<div class="toast-mark">${marks[type]||'i'}</div><div class="toast-copy"></div><button class="toast-close" aria-label="Dismiss">✕</button>`
+    toast.querySelector('.toast-copy').textContent=message
+    const remove=()=>{ if(toast.classList.contains('leaving'))return; toast.classList.add('leaving'); setTimeout(()=>toast.remove(),210) }
+    toast.querySelector('.toast-close').addEventListener('click',remove)
+    stack.appendChild(toast); requestAnimationFrame(()=>toast.classList.add('show'))
+    if(duration>0)setTimeout(remove,duration)
+}
+
+let appConfirmResolver=null
+function closeAppConfirm(result=false) {
+    const overlay=document.getElementById('appConfirmOverlay')
+    overlay?.classList.remove('show')
+    const resolve=appConfirmResolver; appConfirmResolver=null
+    if(resolve)resolve(result)
+}
+function appConfirm(message,{title='Are you sure?',confirmText='Delete',danger=true}={}) {
+    if(appConfirmResolver)closeAppConfirm(false)
+    document.getElementById('appConfirmTitle').textContent=title
+    document.getElementById('appConfirmMessage').textContent=message
+    const accept=document.getElementById('appConfirmAccept')
+    accept.textContent=confirmText
+    accept.classList.toggle('danger',danger)
+    accept.classList.toggle('primary',!danger)
+    document.getElementById('appConfirmOverlay').classList.add('show')
+    return new Promise(resolve=>{appConfirmResolver=resolve})
+}
+document.getElementById('appConfirmCancel').addEventListener('click',()=>closeAppConfirm(false))
+document.getElementById('appConfirmAccept').addEventListener('click',()=>closeAppConfirm(true))
+document.getElementById('appConfirmOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAppConfirm(false)})
+
+function subjectById(id){ return scheduleSubjects.find(s=>String(s.id)===String(id)) }
+function classesForRole(role){ return scheduleClasses.filter(c=>c.owner_role===role) }
+function subjectOptionsForRole(role) {
+    const seen=new Map()
+    classesForRole(role).sort((a,b)=>a.day_of_week-b.day_of_week || timeToMinutes(a.start_time)-timeToMinutes(b.start_time)).forEach(c=>{
+        if(!seen.has(String(c.subject_id))) seen.set(String(c.subject_id), c.display_title)
+    })
+    return [...seen.entries()].map(([id,label])=>({id,label}))
+}
+function subjectDisplayForRole(subjectId,role=user.role) {
+    if(!subjectId) return ''
+    const cls=classesForRole(role).find(c=>String(c.subject_id)===String(subjectId))
+    return cls?.display_title || subjectById(subjectId)?.canonical_name || 'Subject'
+}
+
+function populateTaskSubjectSelect(selected='') {
+    const sel=document.getElementById('taskSubject'); if(!sel)return
+    const opts=subjectOptionsForRole(user.role)
+    sel.innerHTML='<option value="">No subject</option>' + opts.map(o=>`<option value="${escapeHtml(o.id)}">${escapeHtml(o.label)}</option>`).join('')
+    sel.value=selected || ''
+}
+
+async function loadScheduleData() {
+    const monday=weekMonday(), friday=addDays(monday,4)
+    const [{data:subs,error:se},{data:classes,error:ce},{data:events,error:ee}] = await Promise.all([
+        supabase.from('schedule_subjects').select('*').order('canonical_name'),
+        supabase.from('schedule_classes').select('*').order('day_of_week').order('start_time'),
+        supabase.from('schedule_events').select('*').gte('event_date',localDateKey(monday)).lte('event_date',localDateKey(friday)).order('event_date').order('start_time')
+    ])
+    if(se||ce||ee){ console.log('Schedule load error',se||ce||ee); return }
+    scheduleSubjects=subs||[]; scheduleClasses=classes||[]; scheduleEvents=events||[]
+    populateTaskSubjectSelect(document.getElementById('taskSubject')?.value||'')
+    renderSchedule()
+}
+
+function renderScheduleHead() {
+    const monday=weekMonday()
+    document.getElementById('scheduleWeekLabel').textContent = `${monday.toLocaleDateString(undefined,{month:'short',day:'numeric'})} – ${addDays(monday,4).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})} · repeating timetable + this week's events`
+    document.getElementById('scheduleWeekHead').innerHTML = '<div></div>' + DAY_NAMES.map((name,i)=>{
+        const d=addDays(monday,i)
+        return `<div class="schedule-day-head"><div class="schedule-day-name">${name.slice(0,3)}</div><div class="schedule-day-date">${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div></div>`
+    }).join('')
+}
+
+function syncScheduleAlignment() {
+    const scroll=document.getElementById('scheduleScroll'), head=document.getElementById('scheduleWeekHead')
+    if(!scroll||!head)return
+    const scrollbar=Math.max(0,scroll.offsetWidth-scroll.clientWidth)
+    head.style.setProperty('--schedule-scrollbar',`${scrollbar}px`)
+}
+window.addEventListener('resize',()=>requestAnimationFrame(syncScheduleAlignment))
+
+function renderSchedule() {
+    renderScheduleHead()
+    const canvas=document.getElementById('scheduleCanvas'); if(!canvas)return
+    canvas.innerHTML=''
+
+    for(let h=0;h<24;h++){
+        const y=h*60*PIXELS_PER_MINUTE
+        const line=document.createElement('div'); line.className='schedule-hour-line'; line.style.top=y+'px'; canvas.appendChild(line)
+        const label=document.createElement('div'); label.className='schedule-time-label'; label.style.top=y+'px'; label.textContent=prettyTime(`${String(h).padStart(2,'0')}:00`); canvas.appendChild(label)
+    }
+    PERIOD_STARTS.forEach(t=>{
+        const line=document.createElement('div'); line.className='schedule-period-line'; line.style.top=(timeToMinutes(t)*PIXELS_PER_MINUTE)+'px'; canvas.appendChild(line)
+    })
+
+    const layer=document.createElement('div'); layer.className='schedule-days-layer'; canvas.appendChild(layer)
+    const tracks=[]
+    for(let i=0;i<5;i++){ const tr=document.createElement('div'); tr.className='schedule-day-track'; tr.dataset.day=String(i+1); layer.appendChild(tr); tracks.push(tr) }
+
+    classesForRole(scheduleViewRole).forEach(cls=>{
+        const track=tracks[cls.day_of_week-1]; if(!track)return
+        const el=document.createElement('div')
+        const isBreak=!!cls.locked && /recess|lunch|flag/i.test(cls.display_title)
+        el.className='schedule-block schedule-class'+(isBreak?' schedule-break':'')
+        el.style.top=(timeToMinutes(cls.start_time)*PIXELS_PER_MINUTE)+'px'
+        el.style.height=Math.max(10,(timeToMinutes(cls.end_time)-timeToMinutes(cls.start_time))*PIXELS_PER_MINUTE-1)+'px'
+        el.dataset.classId=cls.id
+        el.title=`${cls.display_title}${cls.detail_text?' · '+cls.detail_text:''}\n${prettyTime(cls.start_time)} – ${prettyTime(cls.end_time)}`
+        el.innerHTML=`<div class="schedule-block-title">${escapeHtml(cls.display_title)}</div>${cls.detail_text?`<div class="schedule-block-detail">${escapeHtml(cls.detail_text)}</div>`:''}${(timeToMinutes(cls.end_time)-timeToMinutes(cls.start_time))>=45?`<div class="schedule-block-time">${prettyTime(cls.start_time)}–${prettyTime(cls.end_time)}</div>`:''}`
+        el.addEventListener('contextmenu',e=>{e.preventDefault();showClassContext(e,cls)})
+        track.appendChild(el)
+    })
+
+    const monday=weekMonday()
+    scheduleEvents.filter(ev=>ev.owner_role===scheduleViewRole).forEach(ev=>{
+        const d=new Date(ev.event_date+'T00:00:00')
+        const day=d.getDay(); if(day<1||day>5)return
+        if(localDateKey(d)<localDateKey(monday)||localDateKey(d)>localDateKey(addDays(monday,4)))return
+        const track=tracks[day-1]
+        const el=document.createElement('div'); el.className='schedule-block schedule-event'
+        el.style.top=(timeToMinutes(ev.start_time)*PIXELS_PER_MINUTE)+'px'
+        el.style.height=Math.max(16,(timeToMinutes(ev.end_time)-timeToMinutes(ev.start_time))*PIXELS_PER_MINUTE-1)+'px'
+        el.dataset.eventId=ev.id
+        el.title=`${ev.title}${ev.description?' · '+ev.description:''}\n${prettyTime(ev.start_time)} – ${prettyTime(ev.end_time)}`
+        el.innerHTML=`<div class="schedule-block-title">✦ ${escapeHtml(ev.title)}</div>${ev.description?`<div class="schedule-block-detail">${escapeHtml(ev.description)}</div>`:''}<div class="schedule-block-time">${prettyTime(ev.start_time)}–${prettyTime(ev.end_time)}</div>`
+        el.addEventListener('contextmenu',e=>{e.preventDefault();showEventContext(e,ev)})
+        track.appendChild(el)
+    })
+
+    const today=new Date(), day=today.getDay()
+    if(day>=1&&day<=5){
+        const nowLine=document.createElement('div'); nowLine.className='schedule-now-line'; nowLine.style.top=((today.getHours()*60+today.getMinutes())*PIXELS_PER_MINUTE)+'px'; canvas.appendChild(nowLine)
+    }
+
+    document.getElementById('scheduleMineBtn').classList.toggle('active',scheduleViewRole===user.role)
+    document.getElementById('schedulePartnerBtn').classList.toggle('active',scheduleViewRole!==user.role)
+    const own=scheduleViewRole===user.role
+    document.getElementById('scheduleModeHint').textContent=own?'Editable':'Read only'
+    document.getElementById('scheduleAddClassBtn').hidden=!own
+    document.getElementById('scheduleAddEventBtn').hidden=!own
+
+    requestAnimationFrame(syncScheduleAlignment)
+    if(!scheduleAutoScrolled){
+        requestAnimationFrame(()=>{ document.getElementById('scheduleScroll').scrollTop=7*60-20; scheduleAutoScrolled=true; syncScheduleAlignment() })
+    }
+}
+
+function showContextMenu(e,html) {
+    const menu=document.getElementById('scheduleContext'); menu.innerHTML=html; menu.classList.add('show')
+    const pad=8, w=200, h=Math.min(260,menu.scrollHeight||180)
+    menu.style.left=Math.min(e.clientX,window.innerWidth-w-pad)+'px'
+    menu.style.top=Math.min(e.clientY,window.innerHeight-h-pad)+'px'
+    return menu
+}
+function closeScheduleContext(){ document.getElementById('scheduleContext')?.classList.remove('show') }
+
+function showClassContext(e,cls) {
+    const own=scheduleViewRole===user.role
+    const menu=showContextMenu(e,`<div class="ctx-title">${escapeHtml(cls.display_title)}</div><button class="ctx-btn" data-action="deadlines">⌛ Deadlines</button>${own&&!cls.locked?'<div class="ctx-sep"></div><button class="ctx-btn" data-action="edit">✎ Edit class</button><button class="ctx-btn danger" data-action="delete">✕ Delete class</button>':''}`)
+    menu.querySelector('[data-action="deadlines"]').onclick=()=>{closeScheduleContext();openDeadlines(cls.subject_id,cls.display_title,scheduleViewRole)}
+    menu.querySelector('[data-action="edit"]')?.addEventListener('click',()=>{closeScheduleContext();openClassModal(cls)})
+    menu.querySelector('[data-action="delete"]')?.addEventListener('click',async()=>{
+        closeScheduleContext()
+        const ok=await appConfirm(`Delete ${cls.display_title} from your weekly schedule?`,{title:'Delete class?',confirmText:'Delete class'})
+        if(!ok)return
+        const {error}=await supabase.from('schedule_classes').delete().eq('id',cls.id).eq('owner_role',user.role)
+        if(error){console.log(error);notify('Could not delete the class.','error');return}
+        notify('Class deleted.','success'); await loadScheduleData()
+    })
+}
+function showEventContext(e,ev) {
+    const own=scheduleViewRole===user.role
+    const menu=showContextMenu(e,`<div class="ctx-title">✦ ${escapeHtml(ev.title)}</div>${ev.description?`<div style="padding:0 9px 7px;color:#636882;font-size:10.5px;max-width:220px;">${escapeHtml(ev.description)}</div>`:''}${own?'<div class="ctx-sep"></div><button class="ctx-btn" data-action="edit">✎ Edit event</button><button class="ctx-btn danger" data-action="delete">✕ Delete event</button>':'<div style="padding:7px 9px;color:#636882;font-size:10.5px;">Partner event · read only</div>'}`)
+    menu.querySelector('[data-action="edit"]')?.addEventListener('click',()=>{closeScheduleContext();openEventModal(ev)})
+    menu.querySelector('[data-action="delete"]')?.addEventListener('click',async()=>{
+        closeScheduleContext()
+        const ok=await appConfirm(`Delete ${ev.title}?`,{title:'Delete event?',confirmText:'Delete event'})
+        if(!ok)return
+        const {error}=await supabase.from('schedule_events').delete().eq('id',ev.id).eq('owner_role',user.role)
+        if(error){console.log(error);notify('Could not delete the event.','error');return}
+        notify('Event deleted.','success'); await loadScheduleData()
+    })
+}
+
+document.addEventListener('click',e=>{ if(!e.target.closest('#scheduleContext'))closeScheduleContext() })
+document.addEventListener('scroll',closeScheduleContext,true)
+
+function openClassModal(cls=null) {
+    if(scheduleViewRole!==user.role)return
+    editingScheduleClass=cls
+    const overlay=document.getElementById('classModalOverlay')
+    document.getElementById('classModalTitle').textContent=cls?'✦ Edit Class':'✦ Add Class'
+    const select=document.getElementById('classSubjectSelect')
+    const opts=subjectOptionsForRole(user.role)
+    select.innerHTML=opts.map(o=>`<option value="${o.id}">${escapeHtml(o.label)}</option>`).join('')+'<option value="__new__">＋ New subject…</option>'
+    select.value=cls?.subject_id || (opts[0]?.id||'__new__')
+    document.getElementById('newSubjectWrap').style.display=select.value==='__new__'?'flex':'none'
+    document.getElementById('classNewSubject').value=''
+    document.getElementById('classDisplayTitle').value=cls?.display_title || (opts[0]?.label||'')
+    document.getElementById('classDetail').value=cls?.detail_text || ''
+    document.getElementById('classDay').value=String(cls?.day_of_week||1)
+    document.getElementById('classStart').value=String(cls?.start_time||'07:30').slice(0,5)
+    document.getElementById('classEnd').value=String(cls?.end_time||'08:20').slice(0,5)
+    overlay.classList.add('show')
+}
+function closeClassModal(){editingScheduleClass=null;document.getElementById('classModalOverlay').classList.remove('show')}
+document.getElementById('classSubjectSelect').addEventListener('change',e=>{
+    const isNew=e.target.value==='__new__'; document.getElementById('newSubjectWrap').style.display=isNew?'flex':'none'
+    if(!isNew){ const opt=e.target.options[e.target.selectedIndex]; document.getElementById('classDisplayTitle').value=opt.textContent }
+})
+async function saveClass() {
+    if(scheduleViewRole!==user.role)return
+    const sel=document.getElementById('classSubjectSelect')
+    let subjectId=sel.value
+    const displayTitle=document.getElementById('classDisplayTitle').value.trim()
+    const detail=document.getElementById('classDetail').value.trim()||null
+    const day=Number(document.getElementById('classDay').value)
+    const start=document.getElementById('classStart').value, end=document.getElementById('classEnd').value
+    if(!displayTitle||!start||!end){notify('Complete the class title, day, start, and end time.','warning');return}
+    if(timeToMinutes(end)<=timeToMinutes(start)){notify('End time must be after start time.','warning');return}
+    if(subjectId==='__new__'){
+        const name=document.getElementById('classNewSubject').value.trim()||displayTitle
+        const key=`${user.role}_${name.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')}_${Date.now()}`
+        const {data,error}=await supabase.from('schedule_subjects').insert([{subject_key:key,canonical_name:name,owner_role:user.role}]).select().single()
+        if(error){console.log(error);notify('Could not create the subject.','error');return}
+        subjectId=data.id
+    }
+    const payload={owner_role:user.role,subject_id:subjectId,day_of_week:day,start_time:start,end_time:end,display_title:displayTitle,detail_text:detail}
+    let error
+    if(editingScheduleClass) ({error}=await supabase.from('schedule_classes').update(payload).eq('id',editingScheduleClass.id).eq('owner_role',user.role))
+    else ({error}=await supabase.from('schedule_classes').insert([payload]))
+    if(error){console.log(error);notify('Could not save the class.','error');return}
+    const wasEditing=!!editingScheduleClass
+    closeClassModal(); notify(wasEditing?'Class updated.':'Class added.','success'); await loadScheduleData()
+}
+
+function openEventModal(ev=null) {
+    if(scheduleViewRole!==user.role)return
+    editingScheduleEvent=ev
+    document.getElementById('eventModalTitle').textContent=ev?'✦ Edit Event':'✦ Add Event'
+    document.getElementById('eventTitle').value=ev?.title||''
+    document.getElementById('eventDescription').value=ev?.description||''
+    document.getElementById('eventDate').value=ev?.event_date||localDateKey(new Date())
+    document.getElementById('eventStart').value=String(ev?.start_time||'12:00').slice(0,5)
+    document.getElementById('eventEnd').value=String(ev?.end_time||'13:00').slice(0,5)
+    document.getElementById('eventModalOverlay').classList.add('show')
+}
+function closeEventModal(){editingScheduleEvent=null;document.getElementById('eventModalOverlay').classList.remove('show')}
+async function saveEvent() {
+    if(scheduleViewRole!==user.role)return
+    const title=document.getElementById('eventTitle').value.trim(), description=document.getElementById('eventDescription').value.trim()||null
+    const event_date=document.getElementById('eventDate').value, start=document.getElementById('eventStart').value, end=document.getElementById('eventEnd').value
+    if(!title||!event_date||!start||!end){notify('Complete the event title, date, start, and end time.','warning');return}
+    if(timeToMinutes(end)<=timeToMinutes(start)){notify('End time must be after start time.','warning');return}
+    const payload={owner_role:user.role,title,description,event_date,start_time:start,end_time:end}
+    let error
+    if(editingScheduleEvent) ({error}=await supabase.from('schedule_events').update(payload).eq('id',editingScheduleEvent.id).eq('owner_role',user.role))
+    else ({error}=await supabase.from('schedule_events').insert([payload]))
+    if(error){console.log(error);notify('Could not save the event.','error');return}
+    const wasEditing=!!editingScheduleEvent
+    closeEventModal(); notify(wasEditing?'Event updated.':'Event added.','success'); await loadScheduleData()
+}
+
+function openDeadlines(subjectId,label,role) {
+    const overlay=document.getElementById('deadlinesModalOverlay')
+    document.getElementById('deadlinesModalTitle').textContent=`⌛ ${label}`
+    document.getElementById('deadlinesRoleHint').textContent=role===user.role?'Your unfinished tasks in this subject.':`Your partner's unfinished tasks in this subject.`
+    const doneField=role==='bf'?'donebybf':'donebygf'
+    const tasks=allTasks.filter(t=>String(t.subject_id||'')===String(subjectId) && !t[doneField])
+    tasks.sort((a,b)=>{
+        if(!a.deadline&&!b.deadline)return 0; if(!a.deadline)return 1; if(!b.deadline)return -1; return new Date(a.deadline)-new Date(b.deadline)
+    })
+    document.getElementById('deadlinesList').innerHTML=tasks.length?tasks.map(t=>`<div class="deadline-item"><div class="deadline-item-title">${escapeHtml(t.title)}</div><div class="deadline-item-date">${t.deadline?new Date(t.deadline).toLocaleString():'No due date'}</div></div>`).join(''):'<div class="deadline-empty">No unfinished tasks for this subject.</div>'
+    overlay.classList.add('show')
+}
+function closeDeadlines(){document.getElementById('deadlinesModalOverlay').classList.remove('show')}
+
+document.getElementById('scheduleMineBtn').addEventListener('click',()=>{scheduleViewRole=user.role;renderSchedule()})
+document.getElementById('schedulePartnerBtn').addEventListener('click',()=>{scheduleViewRole=partnerRole;renderSchedule()})
+document.getElementById('scheduleAddClassBtn').addEventListener('click',()=>openClassModal())
+document.getElementById('scheduleAddEventBtn').addEventListener('click',()=>openEventModal())
+document.getElementById('classModalClose').addEventListener('click',closeClassModal)
+document.getElementById('classCancelBtn').addEventListener('click',closeClassModal)
+document.getElementById('classSaveBtn').addEventListener('click',saveClass)
+document.getElementById('eventModalClose').addEventListener('click',closeEventModal)
+document.getElementById('eventCancelBtn').addEventListener('click',closeEventModal)
+document.getElementById('eventSaveBtn').addEventListener('click',saveEvent)
+document.getElementById('deadlinesModalClose').addEventListener('click',closeDeadlines)
+document.getElementById('deadlinesCloseBtn').addEventListener('click',closeDeadlines)
+document.getElementById('classModalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeClassModal()})
+document.getElementById('eventModalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEventModal()})
+document.getElementById('deadlinesModalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDeadlines()})
 
 // ── MATRIX STATE ──
 let matrixMap = {}
@@ -670,10 +1265,13 @@ function renderTaskList() {
         item.dataset.description = task.description||''
         item.dataset.deadline    = task.deadline||''
         item.dataset.title       = task.title
+        item.dataset.subjectId   = task.subject_id||''
         item.draggable = true
+        const subjectLabel = subjectDisplayForRole(task.subject_id,user.role)
         item.innerHTML = `
             <div class="task-check ${isDone?'done':''}" data-id="${task.id}"></div>
             <span class="task-text ${inMatrix?'dimmed':''}" title="${task.title}">${task.title}</span>
+            ${subjectLabel?`<span class="task-subject-pill" title="${subjectLabel}">${subjectLabel}</span>`:''}
             <button class="task-edit"   data-id="${task.id}">✎</button>
             <button class="task-delete" data-id="${task.id}">✕</button>
         `
@@ -888,7 +1486,9 @@ async function loadTasks() {
 async function toggleTask(el,id) {
     el.classList.toggle('done')
     const field=isBF?"donebybf":"donebygf"
-    await supabase.from("tasks").update({[field]:el.classList.contains('done')}).eq("id",id)
+    const done=el.classList.contains('done')
+    await supabase.from("tasks").update({[field]:done}).eq("id",id)
+    const localTask=allTasks.find(t=>String(t.id)===String(id)); if(localTask)localTask[field]=done
     loadStats()
 }
 
@@ -905,11 +1505,13 @@ function openPanel(taskItem=null) {
         document.getElementById('taskDesc').value=editingTaskItem.dataset.description||''
         const raw=editingTaskItem.dataset.deadline||''
         document.getElementById('taskDate').value=raw?toLocal(new Date(raw)):''
+        populateTaskSubjectSelect(editingTaskItem.dataset.subjectId||'')
     } else {
         heading.innerText='✦ New Task';btn.innerText='Add Task'
         document.getElementById('taskTitle').value=''
         document.getElementById('taskDesc').value=''
         document.getElementById('taskDate').value=''
+        populateTaskSubjectSelect('')
     }
     document.getElementById('panelOverlay').classList.add('show')
     setTimeout(()=>document.getElementById('taskTitle').focus(),50)
@@ -922,23 +1524,26 @@ async function submitTask() {
     const desc=document.getElementById('taskDesc').value.trim()
     const dateLocal=document.getElementById('taskDate').value
     const deadline=dateLocal?new Date(dateLocal).toISOString():null
-    if(!title){alert("Enter a title");return}
+    const subject_id=document.getElementById('taskSubject').value||null
+    if(!title){notify('Enter a task title.','warning');return}
     if(editingTaskItem){
-        const {error}=await supabase.from("tasks").update({title,description:desc,deadline}).eq("id",editingTaskItem.dataset.id)
-        if(error)console.log(error)
-        editingTaskItem=null;closePanel();loadTasks();return
+        const {error}=await supabase.from("tasks").update({title,description:desc,deadline,subject_id}).eq("id",editingTaskItem.dataset.id)
+        if(error){console.log(error);notify('Could not update the task.','error');return}
+        editingTaskItem=null;closePanel();notify('Task updated.','success');loadTasks();return
     }
-    const {error}=await supabase.from("tasks").insert([{title,description:desc,deadline,created_at:new Date().toISOString(),donebybf:false,donebygf:false}])
-    if(error){console.log(error);return}
-    closePanel();loadTasks();loadStats()
+    const {error}=await supabase.from("tasks").insert([{title,description:desc,deadline,subject_id,created_at:new Date().toISOString(),donebybf:false,donebygf:false}])
+    if(error){console.log(error);notify('Could not add the task.','error');return}
+    closePanel();notify('Task added.','success');loadTasks();loadStats()
 }
 
 async function deleteTask(button,id) {
-    const tid=String(id); delete matrixMap[tid]
-    await supabase.from("tasks").delete().eq("id",id)
+    const tid=String(id)
+    const {error}=await supabase.from("tasks").delete().eq("id",id)
+    if(error){console.log(error);notify('Could not delete the task.','error');return}
+    delete matrixMap[tid]
     button.closest('.task-item').remove()
     allTasks=allTasks.filter(t=>String(t.id)!==tid)
-    renderMatrix();loadStats()
+    renderMatrix();loadStats();notify('Task deleted.','success')
 }
 
 async function editTask(button,id) {
@@ -949,6 +1554,7 @@ async function editTask(button,id) {
     document.getElementById('taskTitle').value=data.title
     document.getElementById('taskDesc').value=data.description||''
     document.getElementById('taskDate').value=data.deadline?toLocal(new Date(data.deadline)):''
+    item.dataset.subjectId=data.subject_id||''
     openPanel(item)
 }
 
@@ -1020,7 +1626,7 @@ window.closeStatusModal=closeStatusModal; window.handleStatusOverlayClick=handle
 window.saveStatus=saveStatus
 
 document.getElementById('addNewBtn').addEventListener('click',()=>openPanel())
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){closePanel();closeStatusModal()} })
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){closePanel();closeStatusModal();closeClassModal();closeEventModal();closeDeadlines();closeScheduleContext();closeAppConfirm(false)} })
 
 // ══════════════════════════════════════
 // ── CLASS NOTES PANE ──
@@ -1308,15 +1914,15 @@ area.innerHTML = `
 area.querySelector('#noteSaveBtn').addEventListener('click', async () => {
     const title = area.querySelector('#noteTitle').value.trim()
     const url   = area.querySelector('#noteLinkUrl').value.trim()
-    if (!title) { alert('Enter a note title'); return }
-    if (!url)   { alert('Enter a URL'); return }
+    if (!title) { notify('Enter a note title.','warning'); return }
+    if (!url)   { notify('Enter a URL.','warning'); return }
 
     const { error } = await supabase.from('notes').insert([{
         lesson_id: lessonId, title, type: 'link',
         url, file_type: 'link', created_by: user.role
     }])
-    if (error) { console.log(error); return }
-    await loadNotes()
+    if (error) { console.log(error); notify('Could not save the note.','error'); return }
+    notify('Note saved.','success'); await loadNotes()
 })
 
     body.appendChild(area)
@@ -1397,27 +2003,39 @@ function editLessonInline(el, les) {
 // DELETES
 // ════════════════════════════
 async function deleteSubject(id) {
-    if (!confirm('Delete this subject and all its lessons and notes?')) return
-    await supabase.from('subjects').delete().eq('id',id)
-    await loadNotes()
+    const ok=await appConfirm('Delete this subject and all of its lessons and notes?',{title:'Delete subject?',confirmText:'Delete subject'})
+    if(!ok)return
+    const {error}=await supabase.from('subjects').delete().eq('id',id)
+    if(error){console.log(error);notify('Could not delete the subject.','error');return}
+    notify('Subject deleted.','success'); await loadNotes()
 }
 async function deleteLesson(id, subId) {
-    if (!confirm('Delete this lesson and all its notes?')) return
-    await supabase.from('lessons').delete().eq('id',id)
+    const ok=await appConfirm('Delete this lesson and all of its notes?',{title:'Delete lesson?',confirmText:'Delete lesson'})
+    if(!ok)return
+    const {error}=await supabase.from('lessons').delete().eq('id',id)
+    if(error){console.log(error);notify('Could not delete the lesson.','error');return}
     if (drillLevel==='notes') { drillLevel='lessons'; drillLesson=null }
-    await loadNotes()
+    notify('Lesson deleted.','success'); await loadNotes()
 }
 async function deleteNote(id) {
-    await supabase.from('notes').delete().eq('id',id)
-    await loadNotes()
+    const ok=await appConfirm('Delete this note?',{title:'Delete note?',confirmText:'Delete note'})
+    if(!ok)return
+    const {error}=await supabase.from('notes').delete().eq('id',id)
+    if(error){console.log(error);notify('Could not delete the note.','error');return}
+    notify('Note deleted.','success'); await loadNotes()
 }
 
 // kick off notes load
 loadNotes()
 setInterval(loadNotes, 15000)
 
-updatePartnerStatus(); updateOnlineStatus(); loadTasks(); loadStats(); loadStatuses()
-setInterval(updatePartnerStatus,3000); setInterval(updateOnlineStatus,10000); setInterval(loadStatuses,5000)
+async function initialDashboardLoad(){
+    await loadScheduleData()
+    await loadTasks()
+    loadStats(); loadStatuses(); updatePartnerStatus(); updateOnlineStatus()
+}
+initialDashboardLoad()
+setInterval(updatePartnerStatus,3000); setInterval(updateOnlineStatus,10000); setInterval(loadStatuses,5000); setInterval(loadTasks,10000); setInterval(loadScheduleData,30000)
 </script>
 </body>
 </html>
