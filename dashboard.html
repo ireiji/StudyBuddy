@@ -3,7 +3,7 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Study Buddy — Dashboard</title>
+    <title>Study Buddy</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <style>
@@ -1554,7 +1554,13 @@ function formatFocusTime(sec){sec=Math.max(0,Math.round(sec));return `${String(M
 function formatDuration(sec){const mins=Math.round(sec/60);if(mins<60)return `${mins}m`;const h=Math.floor(mins/60),m=mins%60;return m?`${h}h ${m}m`:`${h}h`}
 function isStudySubjectAllowed(label=''){
     const name=String(label).trim().toLowerCase()
-    return !(/\brecess\b/.test(name) || /\blunch(?: break)?\b/.test(name))
+    return !(
+        /\brecess\b/.test(name) ||
+        /\blunch(?: break)?\b/.test(name) ||
+        /\bflag raising\b/.test(name) ||
+        /\bhomeroom\b/.test(name) ||
+        /\bleap(?: period)?\b/.test(name)
+    )
 }
 function closeStudySubjectMenu(){
     document.getElementById('studySubjectMenu')?.classList.remove('show')
@@ -1854,7 +1860,7 @@ function setTaskSubject(value,label=''){
 }
 function populateTaskSubjectSelect(selected='') {
     const sel=document.getElementById('taskSubject'), menu=document.getElementById('taskSubjectMenu'); if(!sel||!menu)return
-    const opts=subjectOptionsForRole(user.role)
+    const opts=subjectOptionsForRole(user.role).filter(o=>isStudySubjectAllowed(o.label))
     sel.innerHTML='<option value="">No subject</option>' + opts.map(o=>`<option value="${escapeHtml(o.id)}">${escapeHtml(o.label)}</option>`).join('')
     sel.value=[...sel.options].some(o=>o.value===String(selected||''))?String(selected||''):''
     const rows=[{id:'',label:'No subject'},...opts]
