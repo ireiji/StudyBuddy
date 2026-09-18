@@ -453,6 +453,55 @@
 
         .empty-hint { text-align: center; padding: 24px 0; color: #636882; font-size: 13px; }
 
+
+        /* ── NOTE TYPES / PICTURE NOTES ── */
+        .note-item { min-height: 52px; }
+        .note-thumb {
+            width: 48px; height: 48px; border-radius: 9px; object-fit: cover; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04);
+        }
+        .note-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+        .note-copy .note-title { width: 100%; }
+        .note-kind {
+            display: inline-flex; align-items: center; width: max-content; max-width: 100%;
+            padding: 2px 7px; border-radius: 999px; font-size: 9.5px; font-weight: 700;
+            letter-spacing: .03em; text-transform: uppercase; color: #8b91a8;
+            background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+        }
+        .note-kind.gizmo { color: #c4b5fd; background: rgba(167,139,250,.09); border-color: rgba(167,139,250,.18); }
+        .note-kind.google-doc { color: #93c5fd; background: rgba(108,142,244,.09); border-color: rgba(108,142,244,.18); }
+        .note-kind.image { color: #86efac; background: rgba(74,222,128,.08); border-color: rgba(74,222,128,.18); }
+
+        .note-source-tabs {
+            display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; margin: 2px 0 10px;
+        }
+        .note-source-btn {
+            min-width: 0; padding: 7px 8px; border-radius: 8px; cursor: pointer;
+            background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08);
+            color: #777d94; font: 600 10.5px 'DM Sans',sans-serif; transition: .15s ease;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .note-source-btn:hover { background: rgba(255,255,255,.07); color: #e8eaf0; }
+        .note-source-btn.active { color: #b9c7ff; background: rgba(108,142,244,.13); border-color: rgba(108,142,244,.35); }
+        .note-source-panel { display: none; }
+        .note-source-panel.active { display: block; }
+        .note-upload-zone {
+            display: flex; align-items: center; gap: 12px; padding: 11px;
+            border: 1px dashed rgba(108,142,244,.3); border-radius: 10px; background: rgba(108,142,244,.035);
+        }
+        .note-upload-preview {
+            width: 64px; height: 64px; flex: 0 0 64px; border-radius: 10px; object-fit: cover;
+            background: #0f1219; border: 1px solid rgba(255,255,255,.08); display: none;
+        }
+        .note-upload-copy { min-width: 0; flex: 1; }
+        .note-file-name { color: #8b91a8; font-size: 10.5px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .note-help { color: #636882; font-size: 10.5px; line-height: 1.4; margin-top: 6px; }
+        .note-save-btn:disabled { opacity: .55; cursor: wait; }
+        @media (max-width: 600px) {
+            .note-source-tabs { grid-template-columns: 1fr 1fr; }
+            .note-open-btn { padding: 5px 8px; }
+        }
+
         /* ── INLINE EDIT INPUT ── */
         .inline-edit {
             background: rgba(255,255,255,.05); border: 1px solid rgba(108,142,244,.4);
@@ -516,7 +565,32 @@
         .schedule-days-layer { position:absolute; left:var(--schedule-gutter); right:0; top:0; bottom:0; display:grid; grid-template-columns:repeat(5,1fr); z-index:1; }
         .schedule-day-track { position:relative; border-left:1px solid rgba(255,255,255,.045); min-width:0; }
         .schedule-day-track:last-child { border-right:1px solid rgba(255,255,255,.045); }
-        .schedule-now-line { position:absolute; left:var(--schedule-gutter); right:0; height:1px; background:#f87171; box-shadow:0 0 5px rgba(248,113,113,.45); z-index:8; pointer-events:none; }
+        /* The current time is shown by highlighting the active schedule block instead of drawing a line. */
+        .schedule-current {
+            border-color:rgba(141,167,255,.9) !important;
+            background:rgba(108,142,244,.32) !important;
+            box-shadow:0 0 0 2px rgba(108,142,244,.22), 0 8px 18px rgba(0,0,0,.28), 0 0 18px rgba(108,142,244,.18) !important;
+            z-index:7 !important;
+        }
+        .schedule-event.schedule-current {
+            border-color:rgba(251,191,36,.95) !important;
+            background:rgba(251,191,36,.28) !important;
+            box-shadow:0 0 0 2px rgba(251,191,36,.20), 0 8px 18px rgba(0,0,0,.28), 0 0 18px rgba(251,191,36,.16) !important;
+            z-index:8 !important;
+        }
+        .schedule-current::after {
+            content:'NOW';
+            position:absolute;
+            top:3px; right:4px;
+            padding:2px 4px;
+            border-radius:4px;
+            background:rgba(13,15,20,.72);
+            color:#dce4ff;
+            font:700 6.8px 'Syne',sans-serif;
+            letter-spacing:.06em;
+            pointer-events:none;
+        }
+        .schedule-event.schedule-current::after { color:#fde68a; }
 
         .schedule-block {
             position:absolute; left:3px; right:3px; border-radius:6px; overflow:hidden; padding:4px 5px;
@@ -526,7 +600,7 @@
         .schedule-class { background:rgba(108,142,244,.17); border:1px solid rgba(108,142,244,.32); color:#dce4ff; }
         .schedule-class:hover { background:rgba(108,142,244,.24); border-color:rgba(108,142,244,.5); }
         .schedule-break { background:rgba(255,255,255,.035); border:1px dashed rgba(255,255,255,.11); color:#777d94; z-index:2; }
-        .schedule-event { left:8%; right:2px; background:rgba(251,191,36,.16); border:1px solid rgba(251,191,36,.45); color:#fde68a; z-index:5; }
+        .schedule-event { left:8%; right:2px; background:rgba(251,191,36,.16); border:1px solid rgba(251,191,36,.45); color:#fde68a; z-index:5; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
         .schedule-event:hover { background:rgba(251,191,36,.23); }
         .schedule-block-title { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .schedule-block-detail { font-size:8.2px; opacity:.72; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -716,12 +790,6 @@
             <div class="card notes-card">
                 <div class="card-title" style="margin-bottom:4px;">
                     Class Notes
-                    <div style="display:flex;gap:8px;align-items:center;">
-                        <div class="notes-view-toggle">
-                            <button class="view-btn active" id="viewAccordion" onclick="setView('accordion')">≡ Accordion</button>
-                            <button class="view-btn" id="viewDrill" onclick="setView('drill')">› Drill-down</button>
-                        </div>
-                    </div>
                 </div>
                 <div class="notes-toolbar">
                     <span style="font-size:11px;color:#636882;" id="notesSubtitle">Your shared class notes</span>
@@ -1040,11 +1108,29 @@ function renderSchedule() {
     const tracks=[]
     for(let i=0;i<5;i++){ const tr=document.createElement('div'); tr.className='schedule-day-track'; tr.dataset.day=String(i+1); layer.appendChild(tr); tracks.push(tr) }
 
+    const today=new Date()
+    const todayDay=today.getDay()
+    const todayKey=localDateKey(today)
+    const nowMinutes=today.getHours()*60+today.getMinutes()
+    const monday=weekMonday()
+
+    // A dated event takes priority over the repeating class beneath it.
+    // If no dated event is active, the active recurring class/break is highlighted.
+    const currentEvents=scheduleEvents.filter(ev=>
+        ev.owner_role===scheduleViewRole &&
+        ev.event_date===todayKey &&
+        nowMinutes>=timeToMinutes(ev.start_time) &&
+        nowMinutes<timeToMinutes(ev.end_time)
+    )
+    const hasCurrentEvent=currentEvents.length>0
+    const currentEventIds=new Set(currentEvents.map(ev=>String(ev.id)))
+
     classesForRole(scheduleViewRole).forEach(cls=>{
         const track=tracks[cls.day_of_week-1]; if(!track)return
         const el=document.createElement('div')
         const isBreak=!!cls.locked && /recess|lunch|flag/i.test(cls.display_title)
-        el.className='schedule-block schedule-class'+(isBreak?' schedule-break':'')
+        const isCurrentClass=!hasCurrentEvent && todayDay===cls.day_of_week && nowMinutes>=timeToMinutes(cls.start_time) && nowMinutes<timeToMinutes(cls.end_time)
+        el.className='schedule-block schedule-class'+(isBreak?' schedule-break':'')+(isCurrentClass?' schedule-current':'')
         el.style.top=(timeToMinutes(cls.start_time)*PIXELS_PER_MINUTE)+'px'
         el.style.height=Math.max(10,(timeToMinutes(cls.end_time)-timeToMinutes(cls.start_time))*PIXELS_PER_MINUTE-1)+'px'
         el.dataset.classId=cls.id
@@ -1054,26 +1140,22 @@ function renderSchedule() {
         track.appendChild(el)
     })
 
-    const monday=weekMonday()
     scheduleEvents.filter(ev=>ev.owner_role===scheduleViewRole).forEach(ev=>{
         const d=new Date(ev.event_date+'T00:00:00')
         const day=d.getDay(); if(day<1||day>5)return
         if(localDateKey(d)<localDateKey(monday)||localDateKey(d)>localDateKey(addDays(monday,4)))return
         const track=tracks[day-1]
-        const el=document.createElement('div'); el.className='schedule-block schedule-event'
+        const isCurrentEvent=currentEventIds.has(String(ev.id))
+        const el=document.createElement('div'); el.className='schedule-block schedule-event'+(isCurrentEvent?' schedule-current':'')
         el.style.top=(timeToMinutes(ev.start_time)*PIXELS_PER_MINUTE)+'px'
         el.style.height=Math.max(16,(timeToMinutes(ev.end_time)-timeToMinutes(ev.start_time))*PIXELS_PER_MINUTE-1)+'px'
         el.dataset.eventId=ev.id
         el.title=`${ev.title}${ev.description?' · '+ev.description:''}\n${prettyTime(ev.start_time)} – ${prettyTime(ev.end_time)}`
         el.innerHTML=`<div class="schedule-block-title">✦ ${escapeHtml(ev.title)}</div>${ev.description?`<div class="schedule-block-detail">${escapeHtml(ev.description)}</div>`:''}<div class="schedule-block-time">${prettyTime(ev.start_time)}–${prettyTime(ev.end_time)}</div>`
         el.addEventListener('contextmenu',e=>{e.preventDefault();showEventContext(e,ev)})
+        addLongPressContext(el, pos=>showEventContext(pos,ev))
         track.appendChild(el)
     })
-
-    const today=new Date(), day=today.getDay()
-    if(day>=1&&day<=5){
-        const nowLine=document.createElement('div'); nowLine.className='schedule-now-line'; nowLine.style.top=((today.getHours()*60+today.getMinutes())*PIXELS_PER_MINUTE)+'px'; canvas.appendChild(nowLine)
-    }
 
     document.getElementById('scheduleMineBtn').classList.toggle('active',scheduleViewRole===user.role)
     document.getElementById('schedulePartnerBtn').classList.toggle('active',scheduleViewRole!==user.role)
@@ -1096,6 +1178,49 @@ function showContextMenu(e,html) {
     return menu
 }
 function closeScheduleContext(){ document.getElementById('scheduleContext')?.classList.remove('show') }
+
+// Mobile: long-press a dated schedule event to open the same menu as right-click.
+// A small move cancels the press so normal vertical schedule scrolling still works.
+function addLongPressContext(el, openMenu, {delay=520, moveTolerance=12}={}) {
+    let timer=null, startX=0, startY=0, fired=false, suppressClickUntil=0
+
+    const clearTimer=()=>{
+        if(timer!==null){ clearTimeout(timer); timer=null }
+    }
+
+    el.addEventListener('touchstart', e=>{
+        if(e.touches.length!==1)return
+        const t=e.touches[0]
+        startX=t.clientX; startY=t.clientY; fired=false
+        clearTimer()
+        timer=setTimeout(()=>{
+            timer=null; fired=true; suppressClickUntil=Date.now()+800
+            if(navigator.vibrate)navigator.vibrate(25)
+            openMenu({clientX:startX,clientY:startY,preventDefault(){},stopPropagation(){}})
+        },delay)
+    },{passive:true})
+
+    el.addEventListener('touchmove', e=>{
+        const t=e.touches[0]; if(!t)return
+        const dx=t.clientX-startX, dy=t.clientY-startY
+        if(!fired && Math.hypot(dx,dy)>moveTolerance) clearTimer()
+        if(fired) e.preventDefault()
+    },{passive:false})
+
+    el.addEventListener('touchend', e=>{
+        clearTimer()
+        if(fired){ e.preventDefault(); e.stopPropagation() }
+        fired=false
+    },{passive:false})
+
+    el.addEventListener('touchcancel',()=>{ clearTimer(); fired=false },{passive:true})
+
+    // Prevent the synthetic click after a successful long-press from immediately
+    // closing the context menu through the document-level click handler.
+    el.addEventListener('click',e=>{
+        if(Date.now()<suppressClickUntil){ e.preventDefault(); e.stopPropagation() }
+    })
+}
 
 function showClassContext(e,cls) {
     const own=scheduleViewRole===user.role
@@ -1632,7 +1757,6 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){closePanel();clos
 // ── CLASS NOTES PANE ──
 // ══════════════════════════════════════
 
-let notesView = 'accordion'   // 'accordion' | 'drill'
 let drillLevel = 'subjects'   // 'subjects' | 'lessons' | 'notes'
 let drillSubject = null        // { id, title }
 let drillLesson  = null        // { id, title }
@@ -1643,27 +1767,44 @@ let allNotes    = {}   // { lessonId:  [...notes]   }
 
 // ── icons by file type ──
 function noteIcon(type) {
-    return {pdf:'📄',word:'📝',image:'🖼️',link:'🔗'}[type] || '📎'
+    return {pdf:'📄',word:'📝',image:'🖼️','google-doc':'📘',gizmo:'🧠',link:'🔗'}[type] || '📎'
 }
-
-// ── VIEW TOGGLE ──
-window.setView = function(v) {
-    notesView = v
-    document.getElementById('viewAccordion').classList.toggle('active', v==='accordion')
-    document.getElementById('viewDrill').classList.toggle('active', v==='drill')
-    drillLevel='subjects'; drillSubject=null; drillLesson=null
-    renderNotes()
+function noteKindLabel(type) {
+    return {image:'Picture','google-doc':'Google Doc',gizmo:'Gizmo Flashcards',link:'Link'}[type] || 'Note'
+}
+function noteOpenLabel(type) {
+    return type==='image'?'View':type==='gizmo'?'Study':type==='google-doc'?'Open doc':'Open'
 }
 
 // ── TOP-LEVEL ADD BUTTON ──
 window.notesAddTop = function() {
-    if (notesView==='accordion' || drillLevel==='subjects') addSubjectInline()
+    if (drillLevel==='subjects') addSubjectInline()
     else if (drillLevel==='lessons') addLessonInline(drillSubject.id)
     else if (drillLevel==='notes') showAddNoteForm(drillLesson.id)
 }
 
 // ── LOAD ALL DATA ──
-async function loadNotes() {
+function hasActiveNoteDraft() {
+    if (drillLevel !== 'notes' || !drillLesson) return false
+    const area = document.querySelector(`.add-note-area[data-lesson-id="${drillLesson.id}"]`)
+    if (!area) return false
+
+    // Do not rebuild the form while the user is interacting with it. Recreating a
+    // <input type="file"> clears its selected FileList by browser design.
+    if (document.activeElement && area.contains(document.activeElement)) return true
+    if (area.querySelector('#noteSaveBtn')?.disabled) return true
+
+    const title = area.querySelector('#noteTitle')?.value.trim() || ''
+    const googleUrl = area.querySelector('#noteGoogleUrl')?.value.trim() || ''
+    const gizmoUrl = area.querySelector('#noteGizmoUrl')?.value.trim() || ''
+    const otherUrl = area.querySelector('#noteOtherUrl')?.value.trim() || ''
+    const hasFile = !!area.querySelector('#noteImageFile')?.files?.length
+    const selectedType = area.querySelector('.note-source-btn.active')?.dataset.noteType || 'google-doc'
+
+    return !!(title || googleUrl || gizmoUrl || otherUrl || hasFile || selectedType !== 'google-doc')
+}
+
+async function loadNotes({ background = false } = {}) {
     const { data: subs } = await supabase.from('subjects').select('*').order('created_at')
     allSubjects = subs || []
 
@@ -1681,6 +1822,9 @@ async function loadNotes() {
         allNotes[n.lesson_id].push(n)
     })
 
+    // Background polling may update our cached data, but it must not destroy an
+    // in-progress note draft or selected image. User-triggered loads still render.
+    if (background && hasActiveNoteDraft()) return
     renderNotes()
 }
 
@@ -1689,99 +1833,7 @@ function renderNotes() {
     const body = document.getElementById('notesBody')
     const addBtn = document.getElementById('notesAddBtn')
     const subtitle = document.getElementById('notesSubtitle')
-
-    if (notesView === 'accordion') {
-        addBtn.textContent = '+ Add Subject'
-        subtitle.textContent = 'Your shared class notes'
-        renderAccordion(body)
-    } else {
-        renderDrill(body, addBtn, subtitle)
-    }
-}
-
-// ════════════════════════════
-// ACCORDION VIEW
-// ════════════════════════════
-function renderAccordion(body) {
-    body.innerHTML = ''
-    if (!allSubjects.length) {
-        body.innerHTML = '<div class="empty-hint">No subjects yet — add one above</div>'
-        return
-    }
-    allSubjects.forEach(sub => {
-        const lessons = allLessons[sub.id] || []
-        const block = document.createElement('div')
-        block.className = 'subject-block'
-        block.dataset.id = sub.id
-
-        block.innerHTML = `
-            <div class="subject-header">
-                <span class="subject-chevron">▶</span>
-                <span class="subject-title">${sub.title}</span>
-                <div class="subject-actions">
-                    <button class="icon-action" title="Edit" data-edit-sub="${sub.id}">✎</button>
-                    <button class="icon-action del" title="Delete" data-del-sub="${sub.id}">✕</button>
-                </div>
-            </div>
-            <div class="subject-body" style="display:none;">
-                <div class="lessons-list" id="lessons-${sub.id}"></div>
-                <button class="add-lesson-btn" data-add-lesson="${sub.id}">＋ Add lesson</button>
-            </div>
-        `
-
-        const header = block.querySelector('.subject-header')
-        const subBody = block.querySelector('.subject-body')
-
-        header.addEventListener('click', e => {
-            if (e.target.closest('.subject-actions')) return
-            const open = block.classList.toggle('open')
-            subBody.style.display = open ? 'block' : 'none'
-            if (open) renderLessonsAccordion(sub.id)
-        })
-
-        block.querySelector(`[data-edit-sub]`).addEventListener('click', e => { e.stopPropagation(); editSubjectInline(block, sub) })
-        block.querySelector(`[data-del-sub]`).addEventListener('click', e => { e.stopPropagation(); deleteSubject(sub.id) })
-        block.querySelector(`[data-add-lesson]`).addEventListener('click', () => addLessonInline(sub.id))
-
-        body.appendChild(block)
-    })
-}
-
-function renderLessonsAccordion(subId) {
-    const list = document.getElementById(`lessons-${subId}`)
-    if (!list) return
-    list.innerHTML = ''
-    const lessons = allLessons[subId] || []
-    if (!lessons.length) { list.innerHTML = '<div style="padding:8px 10px;font-size:12px;color:#636882;">No lessons yet</div>'; return }
-    lessons.forEach(les => {
-        const noteCount = (allNotes[les.id]||[]).length
-        const row = document.createElement('div')
-        row.className = 'lesson-row'
-        row.innerHTML = `
-            <span class="lesson-dot"></span>
-            <span class="lesson-title">${les.title}</span>
-            <span class="lesson-count">${noteCount} note${noteCount!==1?'s':''}</span>
-            <button class="icon-action" style="margin-left:4px;" data-edit-les="${les.id}">✎</button>
-            <button class="icon-action del" data-del-les="${les.id}">✕</button>
-            <button class="icon-action" data-open-les="${les.id}" title="Open notes">↗</button>
-        `
-        row.querySelector(`[data-edit-les]`).addEventListener('click', e => { e.stopPropagation(); editLessonInline(row, les) })
-        row.querySelector(`[data-del-les]`).addEventListener('click',  e => { e.stopPropagation(); deleteLesson(les.id, subId) })
-        row.querySelector(`[data-open-les]`).addEventListener('click', e => {
-            e.stopPropagation()
-            drillSubject = allSubjects.find(s=>s.id===subId)
-            drillLesson  = les
-            drillLevel   = 'notes'
-            setView('drill')
-        })
-        row.addEventListener('click', () => {
-            drillSubject = allSubjects.find(s=>s.id===subId)
-            drillLesson  = les
-            drillLevel   = 'notes'
-            setView('drill')
-        })
-        list.appendChild(row)
-    })
+    renderDrill(body, addBtn, subtitle)
 }
 
 // ════════════════════════════
@@ -1876,14 +1928,24 @@ function renderDrillLessons(body) {
 
 function renderDrillNotes(body) {
     const notes = allNotes[drillLesson.id] || []
+    if(!notes.length) body.insertAdjacentHTML('beforeend','<div class="empty-hint">No notes yet</div>')
     notes.forEach(note => {
+        const type = note.file_type || 'link'
         const item = document.createElement('div'); item.className='note-item'
+        const media = type==='image'
+            ? `<img class="note-thumb" src="${escapeHtml(note.url||'')}" alt="${escapeHtml(note.title||'Picture note')}" />`
+            : `<span class="note-icon">${noteIcon(type)}</span>`
         item.innerHTML = `
-            <span class="note-icon">${noteIcon(note.file_type)}</span>
-            <span class="note-title">${note.title}</span>
-            <a class="note-open-btn" href="${note.url}" target="_blank" rel="noopener">Open</a>
+            ${media}
+            <div class="note-copy">
+                <span class="note-title">${escapeHtml(note.title)}</span>
+                <span class="note-kind ${escapeHtml(type)}">${noteKindLabel(type)}</span>
+            </div>
+            <a class="note-open-btn" href="${escapeHtml(note.url||'#')}" target="_blank" rel="noopener noreferrer">${noteOpenLabel(type)}</a>
             <button class="icon-action del" data-del-note="${note.id}" style="margin-left:4px;">✕</button>
         `
+        const img=item.querySelector('.note-thumb')
+        img?.addEventListener('error',()=>{ img.style.display='none'; if(!item.querySelector('.note-icon')) item.insertAdjacentHTML('afterbegin','<span class="note-icon">🖼️</span>') })
         item.querySelector('[data-del-note]').addEventListener('click', () => deleteNote(note.id))
         body.appendChild(item)
     })
@@ -1895,37 +1957,134 @@ function renderDrillNotes(body) {
 // ════════════════════════════
 function showAddNoteForm(lessonId, container) {
     const body = container || document.getElementById('notesBody')
-    const area = document.createElement('div'); area.className='add-note-area'
-    let selectedType = 'null'
+    const existing=body.querySelector(`.add-note-area[data-lesson-id="${lessonId}"]`)
+    if(existing){ existing.scrollIntoView({behavior:'smooth',block:'nearest'}); setTimeout(()=>existing.querySelector('#noteTitle')?.focus(),180); return existing }
+
+    const area = document.createElement('div'); area.className='add-note-area'; area.dataset.lessonId=lessonId
+    let selectedType = 'google-doc'
     let selectedFile = null
+    let previewUrl = null
 
-  
-area.innerHTML = `
-    <label>Add a note</label>
-    <input class="note-input" id="noteTitle" placeholder="Note title…" />
-    <div style="margin-top:6px;">
-        <input class="note-link-input" id="noteLinkUrl" placeholder="https://docs.google.com/…" />
-    </div>
-    <button class="note-save-btn" id="noteSaveBtn">Save note</button>
-`
+    area.innerHTML = `
+        <label>Add a note</label>
+        <input class="note-input" id="noteTitle" placeholder="Note title…" />
+        <div class="note-source-tabs" role="tablist" aria-label="Note type">
+            <button type="button" class="note-source-btn active" data-note-type="google-doc">Google Docs</button>
+            <button type="button" class="note-source-btn" data-note-type="gizmo">Gizmo</button>
+            <button type="button" class="note-source-btn" data-note-type="image">Picture</button>
+            <button type="button" class="note-source-btn" data-note-type="link">Other link</button>
+        </div>
 
-    // save
-    // REPLACE with:
-area.querySelector('#noteSaveBtn').addEventListener('click', async () => {
-    const title = area.querySelector('#noteTitle').value.trim()
-    const url   = area.querySelector('#noteLinkUrl').value.trim()
-    if (!title) { notify('Enter a note title.','warning'); return }
-    if (!url)   { notify('Enter a URL.','warning'); return }
+        <div class="note-source-panel active" data-panel="google-doc">
+            <input class="note-link-input" id="noteGoogleUrl" placeholder="https://docs.google.com/…" />
+            <div class="note-help">Paste a Google Docs, Slides, or Sheets sharing link.</div>
+        </div>
+        <div class="note-source-panel" data-panel="gizmo">
+            <input class="note-link-input" id="noteGizmoUrl" placeholder="https://gizmo.ai/…" />
+            <div class="note-help">Paste a Gizmo flashcard or study-set link.</div>
+        </div>
+        <div class="note-source-panel" data-panel="image">
+            <div class="note-upload-zone">
+                <img class="note-upload-preview" id="noteImagePreview" alt="Selected note preview" />
+                <div class="note-upload-copy">
+                    <label class="note-upload-btn" for="noteImageFile">Choose picture</label>
+                    <input class="note-file-input" id="noteImageFile" type="file" accept="image/*" />
+                    <div class="note-file-name" id="noteImageName">JPG, PNG, WEBP, HEIC and other browser-supported images · max 8 MB</div>
+                </div>
+            </div>
+        </div>
+        <div class="note-source-panel" data-panel="link">
+            <input class="note-link-input" id="noteOtherUrl" placeholder="https://…" />
+            <div class="note-help">Any normal HTTPS web link.</div>
+        </div>
 
-    const { error } = await supabase.from('notes').insert([{
-        lesson_id: lessonId, title, type: 'link',
-        url, file_type: 'link', created_by: user.role
-    }])
-    if (error) { console.log(error); notify('Could not save the note.','error'); return }
-    notify('Note saved.','success'); await loadNotes()
-})
+        <button class="note-save-btn" id="noteSaveBtn">Save note</button>
+    `
+
+    function setType(type){
+        selectedType=type
+        area.querySelectorAll('.note-source-btn').forEach(b=>b.classList.toggle('active',b.dataset.noteType===type))
+        area.querySelectorAll('.note-source-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===type))
+    }
+    area.querySelectorAll('.note-source-btn').forEach(btn=>btn.addEventListener('click',()=>setType(btn.dataset.noteType)))
+
+    const fileInput=area.querySelector('#noteImageFile')
+    const preview=area.querySelector('#noteImagePreview')
+    const fileName=area.querySelector('#noteImageName')
+    fileInput.addEventListener('change',()=>{
+        if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}
+        selectedFile=fileInput.files?.[0]||null
+        if(!selectedFile){ preview.style.display='none'; fileName.textContent='JPG, PNG, WEBP, HEIC and other browser-supported images · max 8 MB'; return }
+        fileName.textContent=selectedFile.name
+        if(selectedFile.type.startsWith('image/')){
+            previewUrl=URL.createObjectURL(selectedFile); preview.src=previewUrl; preview.style.display='block'
+        }
+    })
+
+    area.querySelector('#noteSaveBtn').addEventListener('click', async () => {
+        const saveBtn=area.querySelector('#noteSaveBtn')
+        const title = area.querySelector('#noteTitle').value.trim()
+        if (!title) { notify('Enter a note title.','warning'); return }
+
+        let url=''; let fileType=selectedType; let noteType='link'; let uploadedPath=null
+        try{
+            saveBtn.disabled=true; saveBtn.textContent=selectedType==='image'?'Uploading picture…':'Saving…'
+
+            if(selectedType==='image'){
+                if(!selectedFile){ notify('Choose a picture first.','warning'); return }
+                if(!selectedFile.type.startsWith('image/')){ notify('That file is not an image.','warning'); return }
+                if(selectedFile.size>8*1024*1024){ notify('Picture must be 8 MB or smaller.','warning'); return }
+                const ext=(selectedFile.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg'
+                const unique=(crypto.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`)
+                uploadedPath=`${user.role}/lesson-${lessonId}/${unique}.${ext}`
+                const {error:uploadError}=await supabase.storage.from('note-images').upload(uploadedPath,selectedFile,{cacheControl:'3600',upsert:false,contentType:selectedFile.type})
+                if(uploadError) throw new Error(`IMAGE_UPLOAD:${uploadError.message}`)
+                const {data:publicData}=supabase.storage.from('note-images').getPublicUrl(uploadedPath)
+                url=publicData?.publicUrl||''; fileType='image'; noteType='image'
+                if(!url) throw new Error('IMAGE_URL:Could not create picture URL')
+            } else {
+                const inputId=selectedType==='google-doc'?'#noteGoogleUrl':selectedType==='gizmo'?'#noteGizmoUrl':'#noteOtherUrl'
+                url=area.querySelector(inputId).value.trim()
+                if(!url){ notify('Enter a URL.','warning'); return }
+                let parsed
+                try{ parsed=new URL(url) }catch{ notify('Enter a valid web URL.','warning'); return }
+                if(!/^https?:$/.test(parsed.protocol)){ notify('Use an http:// or https:// link.','warning'); return }
+                const host=parsed.hostname.toLowerCase()
+                if(selectedType==='google-doc' && host!=='docs.google.com') { notify('Paste a docs.google.com link, or choose Other link.','warning'); return }
+                if(selectedType==='gizmo' && !(host==='gizmo.ai'||host.endsWith('.gizmo.ai'))) { notify('Paste a gizmo.ai link, or choose Other link.','warning'); return }
+            }
+
+            const { error } = await supabase.from('notes').insert([{
+                lesson_id: lessonId, title, type: noteType,
+                url, file_type: fileType, created_by: user.role
+            }])
+            if (error) {
+                if(uploadedPath) await supabase.storage.from('note-images').remove([uploadedPath])
+                console.log(error); notify('Could not save the note.','error'); return
+            }
+            if(previewUrl)URL.revokeObjectURL(previewUrl)
+            notify(selectedType==='image'?'Picture note saved.':selectedType==='gizmo'?'Gizmo flashcards saved.':'Note saved.','success')
+            await loadNotes()
+        }catch(err){
+            console.error(err)
+            if(uploadedPath) await supabase.storage.from('note-images').remove([uploadedPath]).catch(()=>{})
+            const msg=String(err?.message||err)
+            if(msg.startsWith('IMAGE_UPLOAD:')) notify('Picture upload is not configured yet. Run the note-images Storage setup SQL first.','error',5200)
+            else notify('Could not save the note.','error')
+        }finally{
+            saveBtn.disabled=false; saveBtn.textContent='Save note'
+        }
+    })
 
     body.appendChild(area)
+    return area
+}
+
+function noteStoragePathFromUrl(url=''){
+    const marker='/storage/v1/object/public/note-images/'
+    const i=String(url).indexOf(marker)
+    if(i<0)return null
+    try{return decodeURIComponent(String(url).slice(i+marker.length).split('?')[0])}catch{return String(url).slice(i+marker.length).split('?')[0]}
 }
 
 // ════════════════════════════
@@ -2020,14 +2179,22 @@ async function deleteLesson(id, subId) {
 async function deleteNote(id) {
     const ok=await appConfirm('Delete this note?',{title:'Delete note?',confirmText:'Delete note'})
     if(!ok)return
+    const note=Object.values(allNotes).flat().find(n=>String(n.id)===String(id))
     const {error}=await supabase.from('notes').delete().eq('id',id)
     if(error){console.log(error);notify('Could not delete the note.','error');return}
+    if(note?.file_type==='image'){
+        const path=noteStoragePathFromUrl(note.url)
+        if(path){
+            const {error:storageError}=await supabase.storage.from('note-images').remove([path])
+            if(storageError)console.warn('Picture cleanup failed:',storageError)
+        }
+    }
     notify('Note deleted.','success'); await loadNotes()
 }
 
 // kick off notes load
 loadNotes()
-setInterval(loadNotes, 15000)
+setInterval(()=>loadNotes({background:true}), 15000)
 
 async function initialDashboardLoad(){
     await loadScheduleData()
