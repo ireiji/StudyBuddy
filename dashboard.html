@@ -242,6 +242,94 @@
             font-weight: 500;
         }
 
+
+        /* ── STATUS ENHANCEMENTS ── */
+        .status-person { min-width: 0; }
+        .status-meta {
+            width: 100%; min-height: 25px; margin: -2px 0 7px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            flex-wrap: wrap;
+        }
+        .status-time {
+            color: #636882; font-size: 10.5px; white-space: nowrap;
+        }
+        .status-mood {
+            display: inline-flex; align-items: center; max-width: 100%;
+            padding: 3px 7px; border-radius: 999px;
+            background: rgba(108,142,244,.10); border: 1px solid rgba(108,142,244,.20);
+            color: #aebdfb; font-size: 10.5px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .status-mood[hidden], .status-time[hidden] { display: none !important; }
+        .status-streak {
+            margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 8px; border-radius: 999px;
+            color: #d8dbea; background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.08); font-size: 10.5px;
+        }
+        .status-streak strong { color: #f5b84c; font-weight: 700; }
+        .status-received-reaction {
+            min-height: 22px; margin-top: 6px; font-size: 10.5px; color: #8b91a8;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .status-received-reaction .reaction-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 7px; border-radius: 999px;
+            background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08);
+            color: #c7ccda;
+        }
+        .status-reaction-row {
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            margin-top: 6px; min-height: 28px;
+        }
+        .status-react-btn {
+            width: 28px; height: 28px; display: grid; place-items: center;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.035); color: #e8eaf0;
+            cursor: pointer; font-size: 14px; transition: .15s ease;
+        }
+        .status-react-btn:hover { background: rgba(255,255,255,.08); transform: translateY(-1px); }
+        .status-react-btn.active {
+            background: rgba(108,142,244,.17); border-color: rgba(108,142,244,.38);
+            box-shadow: 0 0 0 2px rgba(108,142,244,.07);
+        }
+        .status-react-btn:disabled { opacity: .35; cursor: default; transform: none; }
+        .status-quick-area {
+            margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.055);
+        }
+        .status-quick-head {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            margin-bottom: 7px;
+        }
+        .status-quick-label { color: #777d95; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+        .status-quick-hint { color: #555b70; font-size: 10px; }
+        .status-quick-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+        .status-quick-chip {
+            border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035);
+            color: #aeb4c7; border-radius: 999px; padding: 6px 9px;
+            font: 600 10.5px 'DM Sans', sans-serif; cursor: pointer; transition: .15s ease;
+        }
+        .status-quick-chip:hover { color: #e8eaf0; border-color: rgba(108,142,244,.28); background: rgba(108,142,244,.09); }
+        .status-quick-chip:disabled { opacity: .45; cursor: wait; }
+
+        .status-mood-picker { display: flex; flex-wrap: wrap; gap: 7px; }
+        .status-mood-choice {
+            border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.04);
+            color: #8b91a8; border-radius: 999px; padding: 6px 9px;
+            font: 600 11px 'DM Sans',sans-serif; cursor: pointer; transition: .15s ease;
+        }
+        .status-mood-choice:hover { color: #e8eaf0; background: rgba(255,255,255,.07); }
+        .status-mood-choice.active { color: #cbd5ff; background: rgba(108,142,244,.14); border-color: rgba(108,142,244,.36); }
+        .status-mood-label { color:#636882; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:-7px; }
+
+        @media (max-width: 560px) {
+            .status-avatar { width: 78px; height: 78px; }
+            .status-notes-row { gap: 8px; }
+            .status-person { max-width: 48%; }
+            .status-bubble { padding: 9px 10px; font-size: 11.5px; }
+            .status-quick-chip { padding: 6px 8px; }
+        }
+
         /* ── STATUS ACTION POPUP (IG-style bottom sheet) ── */
         .status-popup-overlay {
             position: fixed; inset: 0;
@@ -682,6 +770,66 @@
         .confirm-btn.danger { color:#fff; background:#c94f5f; border:0; }
         .confirm-btn:hover { filter:brightness(1.07); }
 
+
+
+        /* ── SKELETON LOADING ── */
+        .card, .stat-card { position: relative; }
+        .skeleton-layer {
+            position:absolute; inset:0; z-index:30; border-radius:inherit;
+            background:#13161e; padding:22px; overflow:hidden;
+            transition:opacity .2s ease;
+        }
+        .schedule-card .skeleton-layer { padding:16px; }
+        .stat-card .skeleton-layer { padding:20px; }
+        .skeleton-layer.skeleton-leaving { opacity:0; pointer-events:none; }
+        .sk-line, .sk-circle, .sk-block {
+            position:relative; overflow:hidden; background:rgba(255,255,255,.065);
+        }
+        .sk-line::after, .sk-circle::after, .sk-block::after {
+            content:''; position:absolute; inset:0;
+            transform:translateX(-100%);
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);
+            animation:skeletonShimmer 1.25s ease-in-out infinite;
+        }
+        @keyframes skeletonShimmer { 100% { transform:translateX(100%); } }
+        @media (prefers-reduced-motion: reduce) {
+            .sk-line::after, .sk-circle::after, .sk-block::after { animation:none; }
+        }
+        .sk-line { height:11px; border-radius:999px; }
+        .sk-line.sm { height:8px; }
+        .sk-line.md { height:14px; }
+        .sk-line.lg { height:24px; }
+        .sk-circle { border-radius:50%; }
+        .sk-block { border-radius:9px; }
+        .sk-w-25{width:25%}.sk-w-35{width:35%}.sk-w-45{width:45%}.sk-w-55{width:55%}.sk-w-65{width:65%}.sk-w-75{width:75%}.sk-w-90{width:90%}.sk-w-100{width:100%}
+        .sk-stat { display:flex; flex-direction:column; gap:10px; height:100%; justify-content:center; }
+        .sk-stat .sk-circle { width:24px; height:24px; margin-bottom:4px; }
+        .sk-title-row { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
+        .sk-btn { width:68px; height:25px; border-radius:8px; }
+        .sk-task-row { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+        .sk-task-row .sk-circle { width:18px; height:18px; flex:none; }
+        .sk-task-row .sk-line { flex:1; }
+        .sk-task-row .sk-pill { width:52px; height:18px; border-radius:999px; }
+        .sk-matrix-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:8px; height:275px; margin-top:14px; }
+        .sk-matrix-q { border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:9px; }
+        .sk-status-wrap { display:flex; justify-content:space-around; gap:28px; padding-top:24px; }
+        .sk-status-person { flex:1; display:flex; flex-direction:column; align-items:center; gap:12px; }
+        .sk-bubble { width:100%; height:54px; border-radius:14px; }
+        .sk-avatar { width:88px; height:88px; border-radius:50%; }
+        .sk-note-row { border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:13px 14px; display:flex; align-items:center; gap:11px; margin-bottom:8px; }
+        .sk-note-row .sk-circle { width:24px; height:24px; flex:none; }
+        .sk-schedule-toolbar { display:flex; gap:8px; margin-bottom:12px; }
+        .sk-schedule-toolbar .sk-block { height:27px; width:94px; }
+        .sk-schedule-head { display:grid; grid-template-columns:58px repeat(5,1fr); gap:5px; margin:10px 0; }
+        .sk-schedule-head .sk-line { margin:auto; width:64%; }
+        .sk-schedule-body { display:grid; grid-template-columns:58px repeat(5,1fr); gap:5px; height:245px; }
+        .sk-time-col { display:flex; flex-direction:column; justify-content:space-around; padding:4px 0; }
+        .sk-time-col .sk-line { width:42px; }
+        .sk-day-col { position:relative; border-left:1px solid rgba(255,255,255,.05); }
+        .sk-event { position:absolute; left:5px; right:5px; height:39px; border-radius:7px; background:rgba(108,142,244,.12); overflow:hidden; }
+        .sk-event::after { content:''; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent); animation:skeletonShimmer 1.25s ease-in-out infinite; }
+        .sk-day-col:nth-child(2) .sk-event{top:18px}.sk-day-col:nth-child(3) .sk-event{top:74px}.sk-day-col:nth-child(4) .sk-event{top:132px}.sk-day-col:nth-child(5) .sk-event{top:45px}.sk-day-col:nth-child(6) .sk-event{top:158px}
+
    </style>
 </head>
 <body>
@@ -695,15 +843,22 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
-            <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">0</div><div class="stat-label">Tasks finished this week</div></div>
-            <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">0</div><div class="stat-label">Tasks unfinished</div></div>
-            <div class="stat-card"><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">0</div><div class="stat-label">Deadlines this week</div></div>
+            <div class="stat-card"><div class="skeleton-layer" id="skPartner" aria-hidden="true"><div class="sk-stat"><div class="sk-circle"></div><div class="sk-line lg sk-w-65"></div><div class="sk-line sk-w-35"></div></div></div><div class="stat-icon">💗</div><div class="stat-value" id="partnername">[partner]</div><div class="stat-label" id="partnerstatus">checking status</div></div>
+            <div class="stat-card"><div class="skeleton-layer" id="skFinished" aria-hidden="true"><div class="sk-stat"><div class="sk-circle"></div><div class="sk-line lg sk-w-35"></div><div class="sk-line sk-w-65"></div></div></div><div class="stat-icon">✅</div><div class="stat-value" id="statFinished">0</div><div class="stat-label">Tasks finished this week</div></div>
+            <div class="stat-card"><div class="skeleton-layer" id="skUnfinished" aria-hidden="true"><div class="sk-stat"><div class="sk-circle"></div><div class="sk-line lg sk-w-35"></div><div class="sk-line sk-w-55"></div></div></div><div class="stat-icon">❌</div><div class="stat-value" id="statUnfinished">0</div><div class="stat-label">Tasks unfinished</div></div>
+            <div class="stat-card"><div class="skeleton-layer" id="skDeadlines" aria-hidden="true"><div class="sk-stat"><div class="sk-circle"></div><div class="sk-line lg sk-w-35"></div><div class="sk-line sk-w-65"></div></div></div><div class="stat-icon">💀</div><div class="stat-value" id="statDeadlines">0</div><div class="stat-label">Deadlines this week</div></div>
         </div>
 
         <!-- ROW 1: Schedule + Tasks -->
         <div class="dashboard-row">
             <div class="card schedule-card">
+                <div class="skeleton-layer" id="skSchedule" aria-hidden="true">
+                    <div class="sk-title-row"><div class="sk-line md sk-w-35"></div><div style="display:flex;gap:8px"><div class="sk-block sk-btn"></div><div class="sk-block sk-btn"></div></div></div>
+                    <div class="sk-schedule-toolbar"><div class="sk-block"></div><div class="sk-block"></div></div>
+                    <div class="sk-line sm sk-w-55" style="margin-bottom:10px"></div>
+                    <div class="sk-schedule-head"><div></div><div class="sk-line"></div><div class="sk-line"></div><div class="sk-line"></div><div class="sk-line"></div><div class="sk-line"></div></div>
+                    <div class="sk-schedule-body"><div class="sk-time-col"><div class="sk-line sm"></div><div class="sk-line sm"></div><div class="sk-line sm"></div><div class="sk-line sm"></div><div class="sk-line sm"></div></div><div class="sk-day-col"><div class="sk-event"></div></div><div class="sk-day-col"><div class="sk-event"></div></div><div class="sk-day-col"><div class="sk-event"></div></div><div class="sk-day-col"><div class="sk-event"></div></div><div class="sk-day-col"><div class="sk-event"></div></div></div>
+                </div>
                 <div class="card-title" style="margin-bottom:8px;">
                     <span>Weekly Schedule</span>
                     <div class="schedule-title-actions">
@@ -726,6 +881,7 @@
             </div>
 
             <div class="card task-card">
+                <div class="skeleton-layer" id="skTasks" aria-hidden="true"><div class="sk-title-row"><div class="sk-line md sk-w-35"></div><div class="sk-line sk-w-25"></div></div><div class="sk-task-row"><div class="sk-circle"></div><div class="sk-line sk-w-75"></div><div class="sk-block sk-pill"></div></div><div class="sk-task-row"><div class="sk-circle"></div><div class="sk-line sk-w-55"></div><div class="sk-block sk-pill"></div></div><div class="sk-task-row"><div class="sk-circle"></div><div class="sk-line sk-w-65"></div><div class="sk-block sk-pill"></div></div><div class="sk-task-row"><div class="sk-circle"></div><div class="sk-line sk-w-45"></div><div class="sk-block sk-pill"></div></div><div class="sk-task-row"><div class="sk-circle"></div><div class="sk-line sk-w-75"></div><div class="sk-block sk-pill"></div></div></div>
                 <div class="card-title">Today's Tasks <span class="see-all" id="addNewBtn">Add new +</span></div>
                 <div class="task-list" id="taskList"></div>
             </div>
@@ -734,6 +890,7 @@
         <!-- ROW 2: Eisenhower Matrix + Status Notes -->
         <div class="dashboard-row">
             <div class="card matrix-card" style="gap:0;">
+                <div class="skeleton-layer" id="skMatrix" aria-hidden="true"><div class="sk-line md sk-w-45"></div><div class="sk-line sm sk-w-65" style="margin-top:9px"></div><div class="sk-matrix-grid"><div class="sk-matrix-q"><div class="sk-line sm sk-w-45"></div><div class="sk-line sk-w-90"></div><div class="sk-line sk-w-65"></div></div><div class="sk-matrix-q"><div class="sk-line sm sk-w-45"></div><div class="sk-line sk-w-75"></div></div><div class="sk-matrix-q"><div class="sk-line sm sk-w-55"></div><div class="sk-line sk-w-90"></div></div><div class="sk-matrix-q"><div class="sk-line sm sk-w-45"></div><div class="sk-line sk-w-55"></div></div></div></div>
                 <div class="card-title" style="margin-bottom:4px;">Eisenhower Matrix</div>
                 <p class="matrix-subtitle">Drag tasks into a quadrant · double-tap to remove</p>
                 <div class="matrix-axis-row">
@@ -761,25 +918,52 @@
             </div>
 
             <div class="card status-card">
+                <div class="skeleton-layer" id="skStatus" aria-hidden="true"><div class="sk-line md sk-w-35"></div><div class="sk-status-wrap"><div class="sk-status-person"><div class="sk-block sk-bubble"></div><div class="sk-block sk-avatar"></div><div class="sk-line sk-w-35"></div></div><div class="sk-status-person"><div class="sk-block sk-bubble"></div><div class="sk-block sk-avatar"></div><div class="sk-line sk-w-45"></div></div></div></div>
                 <div class="card-title" style="margin-bottom:4px;">Status Notes</div>
                 <div class="status-notes-row">
                     <div class="status-person" id="myPerson">
                         <div class="status-bubble mine empty-mine" id="myBubble">
                             <span id="myStatusText" class="status-empty-text">Tap to add a note…</span>
                         </div>
+                        <div class="status-meta">
+                            <span class="status-mood" id="myStatusMood" hidden></span>
+                            <span class="status-time" id="myStatusTime" hidden></span>
+                        </div>
                         <div class="status-avatar-col">
                             <img class="status-avatar" id="myAvatar" src="bf.png" alt="me" />
                             <span class="status-name">You</span>
+                            <span class="status-streak" id="myStatusStreak"><strong>🔥 0</strong> day streak</span>
                         </div>
+                        <div class="status-received-reaction" id="myReceivedReaction"></div>
                     </div>
                     <div class="status-person" id="partnerPerson">
                         <div class="status-bubble" id="partnerBubble">
                             <span id="partnerStatusText" class="status-empty-text">No note yet</span>
                         </div>
+                        <div class="status-meta">
+                            <span class="status-mood" id="partnerStatusMood" hidden></span>
+                            <span class="status-time" id="partnerStatusTime" hidden></span>
+                        </div>
                         <div class="status-avatar-col">
                             <img class="status-avatar" id="partnerAvatar" src="gf.png" alt="partner" />
                             <span class="status-name" id="partnerStatusName">Partner</span>
+                            <span class="status-streak" id="partnerStatusStreak"><strong>🔥 0</strong> day streak</span>
                         </div>
+                        <div class="status-reaction-row" id="partnerReactionRow" aria-label="React to partner status">
+                            <button class="status-react-btn" type="button" data-reaction="❤️" title="Love">❤️</button>
+                            <button class="status-react-btn" type="button" data-reaction="👍" title="Like">👍</button>
+                            <button class="status-react-btn" type="button" data-reaction="😭" title="Crying">😭</button>
+                            <button class="status-react-btn" type="button" data-reaction="🔥" title="Fire">🔥</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-quick-area">
+                    <div class="status-quick-head"><span class="status-quick-label">Quick status</span><span class="status-quick-hint">one tap to check in</span></div>
+                    <div class="status-quick-chips" id="statusQuickChips">
+                        <button type="button" class="status-quick-chip" data-status-text="Studying right now 📚" data-status-mood="📚 Studying">📚 Studying</button>
+                        <button type="button" class="status-quick-chip" data-status-text="Doing requirements 📝" data-status-mood="📝 Busy">📝 Doing reqs</button>
+                        <button type="button" class="status-quick-chip" data-status-text="Sleepy 😴" data-status-mood="😴 Sleepy">😴 Sleepy</button>
+                        <button type="button" class="status-quick-chip" data-status-text="Free right now 🟢" data-status-mood="🟢 Free">🟢 Free</button>
                     </div>
                 </div>
             </div>
@@ -788,6 +972,7 @@
         <!-- ROW 3: Class Notes -->
         <div class="notes-full-row">
             <div class="card notes-card">
+                <div class="skeleton-layer" id="skNotes" aria-hidden="true"><div class="sk-title-row"><div class="sk-line md sk-w-25"></div><div class="sk-block sk-btn"></div></div><div class="sk-line sm sk-w-35" style="margin-bottom:14px"></div><div class="sk-note-row"><div class="sk-circle"></div><div class="sk-line sk-w-55"></div></div><div class="sk-note-row"><div class="sk-circle"></div><div class="sk-line sk-w-65"></div></div><div class="sk-note-row"><div class="sk-circle"></div><div class="sk-line sk-w-45"></div></div><div class="sk-note-row"><div class="sk-circle"></div><div class="sk-line sk-w-75"></div></div></div>
                 <div class="card-title" style="margin-bottom:4px;">
                     Class Notes
                 </div>
@@ -915,6 +1100,18 @@
         <h3>✦ Your Status</h3>
         <textarea id="statusInput" rows="3" maxlength="150" placeholder="What's on your mind?"></textarea>
         <div class="status-char-count"><span id="statusCharCount">0</span>/150</div>
+        <div class="status-mood-label">Mood</div>
+        <div class="status-mood-picker" id="statusMoodPicker">
+            <button type="button" class="status-mood-choice active" data-mood="">None</button>
+            <button type="button" class="status-mood-choice" data-mood="📚 Studying">📚 Studying</button>
+            <button type="button" class="status-mood-choice" data-mood="😊 Good">😊 Good</button>
+            <button type="button" class="status-mood-choice" data-mood="😴 Sleepy">😴 Sleepy</button>
+            <button type="button" class="status-mood-choice" data-mood="😵 Stressed">😵 Stressed</button>
+            <button type="button" class="status-mood-choice" data-mood="🏀 Active">🏀 Active</button>
+            <button type="button" class="status-mood-choice" data-mood="💙 Supportive">💙 Supportive</button>
+            <button type="button" class="status-mood-choice" data-mood="📝 Busy">📝 Busy</button>
+            <button type="button" class="status-mood-choice" data-mood="🟢 Free">🟢 Free</button>
+        </div>
         <div class="status-modal-footer">
             <button class="btn-cancel" onclick="closeStatusModal()">Cancel</button>
             <button class="btn-add" onclick="saveStatus()">Post</button>
@@ -947,7 +1144,7 @@ function isOnline(ls) { return (new Date() - new Date(ls)) < 30000 }
 
 async function updatePartnerStatus() {
     const { data: users, error } = await supabase.from('users').select('username,role,last_seen').neq('role',user.role)
-    if (error||!users?.length) return
+    if (error||!users?.length) { hideSkeleton('skPartner'); return }
     const p = users[0]
     partnername.innerText = p.username
     const partnerScheduleBtn=document.getElementById('schedulePartnerBtn')
@@ -955,6 +1152,7 @@ async function updatePartnerStatus() {
     const on = isOnline(p.last_seen)
     partnerstatus.innerText = on?"online":"offline"
     partnerstatus.style.color = on?"#4ade80":"#f87171"
+    hideSkeleton('skPartner')
 }
 function updateOnlineStatus() {
     fetch(`${supabaseUrl}/rest/v1/users?id=eq.${user.id}`,{method:"PATCH",headers:{"Content-Type":"application/json","apikey":supabaseKey},body:JSON.stringify({last_seen:new Date().toISOString(),online:true})})
@@ -1002,6 +1200,14 @@ function prettyTime(t) {
 function escapeHtml(value='') {
     return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
 }
+
+function hideSkeleton(id) {
+    const el=document.getElementById(id)
+    if(!el)return
+    el.classList.add('skeleton-leaving')
+    setTimeout(()=>el.remove(),210)
+}
+function hideSkeletons(...ids){ ids.forEach(hideSkeleton) }
 
 function notify(message,type='info',duration=3200) {
     const stack=document.getElementById('toastStack'); if(!stack)return
@@ -1067,10 +1273,11 @@ async function loadScheduleData() {
         supabase.from('schedule_classes').select('*').order('day_of_week').order('start_time'),
         supabase.from('schedule_events').select('*').gte('event_date',localDateKey(monday)).lte('event_date',localDateKey(friday)).order('event_date').order('start_time')
     ])
-    if(se||ce||ee){ console.log('Schedule load error',se||ce||ee); return }
+    if(se||ce||ee){ console.log('Schedule load error',se||ce||ee); hideSkeleton('skSchedule'); return }
     scheduleSubjects=subs||[]; scheduleClasses=classes||[]; scheduleEvents=events||[]
     populateTaskSubjectSelect(document.getElementById('taskSubject')?.value||'')
     renderSchedule()
+    hideSkeleton('skSchedule')
 }
 
 function renderScheduleHead() {
@@ -1583,7 +1790,7 @@ taskListEl.addEventListener('drop', e => { e.preventDefault(); const tid=e.dataT
 // ── STATS ──
 async function loadStats() {
     const {data,error}=await supabase.from("tasks").select("*")
-    if(error){console.log(error);return}
+    if(error){console.log(error);hideSkeletons('skFinished','skUnfinished','skDeadlines');return}
     const now=new Date(),start=new Date(now)
     start.setDate(now.getDate()-now.getDay());start.setHours(0,0,0,0)
     const end=new Date(start);end.setDate(start.getDate()+7)
@@ -1598,13 +1805,15 @@ async function loadStats() {
     document.getElementById("statFinished").innerText=finished
     document.getElementById("statUnfinished").innerText=unfinished
     document.getElementById("statDeadlines").innerText=deadlines
+    hideSkeletons('skFinished','skUnfinished','skDeadlines')
 }
 
 // ── LOAD TASKS ──
 async function loadTasks() {
     const {data,error}=await supabase.from("tasks").select("*").order("created_at",{ascending:false})
-    if(error){console.log(error);return}
+    if(error){console.log(error);hideSkeletons('skTasks','skMatrix');return}
     allTasks=data; await loadMatrix(); renderTaskList(); renderMatrix()
+    hideSkeletons('skTasks','skMatrix')
 }
 
 // ── TASK CRUD ──
@@ -1684,32 +1893,120 @@ async function editTask(button,id) {
 }
 
 // ── STATUS SYSTEM ──
+let selectedStatusMood = ''
+let currentPartnerStatus = null
+let myReactionToPartner = null
+
+function statusDateKey(d=new Date()) {
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0')
+    return `${y}-${m}-${day}`
+}
+function formatStatusTime(ts) {
+    if(!ts) return ''
+    const diff=Math.max(0,Date.now()-new Date(ts).getTime())
+    const sec=Math.floor(diff/1000)
+    if(sec<45)return 'just now'
+    const min=Math.floor(sec/60); if(min<60)return `${min}m ago`
+    const hr=Math.floor(min/60); if(hr<24)return `${hr}h ago`
+    const day=Math.floor(hr/24); if(day<7)return `${day}d ago`
+    return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'})
+}
+function calculateStatusStreak(rows,role) {
+    const dates=[...new Set((rows||[]).filter(r=>r.role===role).map(r=>r.checkin_date))].sort().reverse()
+    if(!dates.length)return 0
+    const today=new Date(); today.setHours(0,0,0,0)
+    const yesterday=new Date(today); yesterday.setDate(yesterday.getDate()-1)
+    const newest=new Date(`${dates[0]}T00:00:00`)
+    if(newest.getTime()!==today.getTime() && newest.getTime()!==yesterday.getTime())return 0
+    let streak=0, expected=new Date(newest)
+    for(const s of dates){
+        const d=new Date(`${s}T00:00:00`)
+        if(d.getTime()!==expected.getTime())break
+        streak++
+        expected.setDate(expected.getDate()-1)
+    }
+    return streak
+}
+function renderStreak(el,streak) {
+    if(!el)return
+    el.innerHTML=`<strong>🔥 ${streak}</strong> day${streak===1?'':'s'} streak`
+}
+function renderStatusMeta(prefix,u) {
+    const mood=document.getElementById(`${prefix}StatusMood`)
+    const time=document.getElementById(`${prefix}StatusTime`)
+    if(mood){ mood.textContent=u?.status_mood||''; mood.hidden=!u?.status_mood; mood.dataset.value=u?.status_mood||'' }
+    if(time){ time.textContent=u?.status_updated_at?formatStatusTime(u.status_updated_at):''; time.hidden=!u?.status_updated_at }
+}
+function setMoodSelection(value='') {
+    selectedStatusMood=value||''
+    document.querySelectorAll('#statusMoodPicker .status-mood-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.mood===selectedStatusMood))
+}
+async function recordStatusCheckin() {
+    const {error}=await supabase.from('status_checkins').upsert({role:user.role,checkin_date:statusDateKey()},{onConflict:'role,checkin_date'})
+    if(error)console.log('Status check-in error',error)
+}
+async function clearReactionsToMyStatus() {
+    const {error}=await supabase.from('status_reactions').delete().eq('target_role',user.role)
+    if(error)console.log('Status reaction reset error',error)
+}
+
 async function loadStatuses() {
-    const {data,error}=await supabase.from('users').select('role,username,status,status_updated_at')
-    if(error){console.log(error);return}
-    data.forEach(u => {
-        if(u.role===user.role) {
-            const myText=document.getElementById('myStatusText')
-            const actions=document.getElementById('statusActions')
-            const addBtn=document.getElementById('addStatusBtn')
-            if(u.status){
-                myText.textContent=u.status
-                myText.classList.remove('status-empty')
-                if(actions) actions.style.display='flex'
-                if(addBtn) addBtn.style.display='none'
-            } else {
-                myText.textContent='No status yet'
-                myText.classList.add('status-empty')
-                if(actions) actions.style.display='none'
-                if(addBtn) addBtn.style.display='block'
-            }
-        } else {
-            const pt=document.getElementById('partnerStatusText')
-            document.getElementById('partnerStatusName').textContent=u.username
-            pt.textContent=u.status||'No status yet'
-            pt.classList.toggle('status-empty', !u.status)
+    const [{data:users,error:userError},{data:checkins,error:checkinError},{data:reactions,error:reactionError}] = await Promise.all([
+        supabase.from('users').select('role,username,status,status_updated_at,status_mood'),
+        supabase.from('status_checkins').select('role,checkin_date').order('checkin_date',{ascending:false}).limit(120),
+        supabase.from('status_reactions').select('target_role,reactor_role,emoji,created_at')
+    ])
+    if(userError){console.log(userError);hideSkeleton('skStatus');return}
+    if(checkinError)console.log('Status streak load error',checkinError)
+    if(reactionError)console.log('Status reaction load error',reactionError)
+
+    const mine=(users||[]).find(u=>u.role===user.role)
+    const partner=(users||[]).find(u=>u.role!==user.role)
+    currentPartnerStatus=partner||null
+
+    if(mine){
+        const myText=document.getElementById('myStatusText')
+        if(mine.status){
+            myText.textContent=mine.status; myText.classList.remove('status-empty','status-empty-text')
+            document.getElementById('myBubble')?.classList.remove('empty-mine')
+        }else{
+            myText.textContent='No status yet'; myText.classList.add('status-empty','status-empty-text')
+            document.getElementById('myBubble')?.classList.add('empty-mine')
         }
+        renderStatusMeta('my',mine)
+        renderStreak(document.getElementById('myStatusStreak'),calculateStatusStreak(checkins,user.role))
+    }
+
+    if(partner){
+        const pt=document.getElementById('partnerStatusText')
+        document.getElementById('partnerStatusName').textContent=partner.username
+        pt.textContent=partner.status||'No status yet'
+        pt.classList.toggle('status-empty',!partner.status)
+        pt.classList.toggle('status-empty-text',!partner.status)
+        document.getElementById('partnerBubble').dataset.hasStatus=partner.status?'1':'0'
+        renderStatusMeta('partner',partner)
+        renderStreak(document.getElementById('partnerStatusStreak'),calculateStatusStreak(checkins,partner.role))
+    }
+
+    const reactionList=reactions||[]
+    const received=reactionList.find(r=>r.target_role===user.role && r.reactor_role!==user.role)
+    const receivedEl=document.getElementById('myReceivedReaction')
+    if(receivedEl){
+        receivedEl.textContent=''
+        if(received){
+            const badge=document.createElement('span'); badge.className='reaction-badge'
+            badge.textContent=`${received.emoji} from ${partner?.username||'partner'}`
+            receivedEl.appendChild(badge)
+        }
+    }
+
+    const mineToPartner=reactionList.find(r=>partner && r.target_role===partner.role && r.reactor_role===user.role)
+    myReactionToPartner=mineToPartner?.emoji||null
+    document.querySelectorAll('#partnerReactionRow .status-react-btn').forEach(btn=>{
+        btn.classList.toggle('active',btn.dataset.reaction===myReactionToPartner)
+        btn.disabled=!partner?.status
     })
+    hideSkeleton('skStatus')
 }
 
 function openStatusModal() {
@@ -1717,6 +2014,7 @@ function openStatusModal() {
     const input=document.getElementById('statusInput')
     input.value=current==='No status yet'?'':current
     document.getElementById('statusCharCount').textContent=input.value.length
+    setMoodSelection(document.getElementById('myStatusMood')?.dataset.value||'')
     document.getElementById('statusModalOverlay').classList.add('show')
     setTimeout(()=>input.focus(),50)
 }
@@ -1726,23 +2024,53 @@ function handleStatusOverlayClick(e) { if(e.target===document.getElementById('st
 async function saveStatus() {
     const text=document.getElementById('statusInput').value.trim()
     if(!text) {
-        await supabase.from('users').update({status:null,status_updated_at:null}).eq('id',user.id)
-        closeStatusModal(); loadStatuses();
-        return
+        const {error}=await supabase.from('users').update({status:null,status_updated_at:null,status_mood:null}).eq('id',user.id)
+        if(error){console.log(error);notify('Could not clear your status.','error');return}
+        await clearReactionsToMyStatus()
+        closeStatusModal(); notify('Status cleared.','success'); loadStatuses(); return
     }
-    await supabase.from('users').update({status:text,status_updated_at:new Date().toISOString()}).eq('id',user.id)
-    closeStatusModal(); loadStatuses()
+    const {error}=await supabase.from('users').update({status:text,status_updated_at:new Date().toISOString(),status_mood:selectedStatusMood||null}).eq('id',user.id)
+    if(error){console.log(error);notify('Could not update your status.','error');return}
+    await Promise.all([recordStatusCheckin(),clearReactionsToMyStatus()])
+    closeStatusModal(); notify('Status updated.','success'); loadStatuses()
 }
 async function deleteStatus() {
-    await supabase.from('users').update({status:null,status_updated_at:null}).eq('id',user.id)
+    const {error}=await supabase.from('users').update({status:null,status_updated_at:null,status_mood:null}).eq('id',user.id)
+    if(error){console.log(error);notify('Could not clear your status.','error');return}
+    await clearReactionsToMyStatus(); notify('Status cleared.','success'); loadStatuses()
+}
+async function postQuickStatus(text,mood,button) {
+    document.querySelectorAll('#statusQuickChips .status-quick-chip').forEach(b=>b.disabled=true)
+    try{
+        const {error}=await supabase.from('users').update({status:text,status_updated_at:new Date().toISOString(),status_mood:mood||null}).eq('id',user.id)
+        if(error){console.log(error);notify('Could not post quick status.','error');return}
+        await Promise.all([recordStatusCheckin(),clearReactionsToMyStatus()])
+        notify(`${button?.textContent?.trim()||'Status'} posted.`,'success')
+        await loadStatuses()
+    }finally{
+        document.querySelectorAll('#statusQuickChips .status-quick-chip').forEach(b=>b.disabled=false)
+    }
+}
+async function reactToPartner(emoji) {
+    if(!currentPartnerStatus?.status){notify('Your partner has no status to react to.','info');return}
+    if(myReactionToPartner===emoji){
+        const {error}=await supabase.from('status_reactions').delete().eq('target_role',currentPartnerStatus.role).eq('reactor_role',user.role)
+        if(error){console.log(error);notify('Could not remove reaction.','error');return}
+    }else{
+        const {error}=await supabase.from('status_reactions').upsert({target_role:currentPartnerStatus.role,reactor_role:user.role,emoji},{onConflict:'target_role,reactor_role'})
+        if(error){console.log(error);notify('Could not send reaction.','error');return}
+    }
     loadStatuses()
 }
 
-document.getElementById('addStatusBtn')?.addEventListener('click',   openStatusModal)
-document.getElementById('editStatusBtn')?.addEventListener('click',   openStatusModal)
-document.getElementById('deleteStatusBtn')?.addEventListener('click', deleteStatus)
-document.getElementById('myBubble')?.addEventListener('click', openStatusModal)
-document.getElementById('statusInput').addEventListener('input', function(){ document.getElementById('statusCharCount').textContent=this.value.length })
+document.getElementById('addStatusBtn')?.addEventListener('click',openStatusModal)
+document.getElementById('editStatusBtn')?.addEventListener('click',openStatusModal)
+document.getElementById('deleteStatusBtn')?.addEventListener('click',deleteStatus)
+document.getElementById('myBubble')?.addEventListener('click',openStatusModal)
+document.getElementById('statusInput').addEventListener('input',function(){document.getElementById('statusCharCount').textContent=this.value.length})
+document.querySelectorAll('#statusMoodPicker .status-mood-choice').forEach(btn=>btn.addEventListener('click',()=>setMoodSelection(btn.dataset.mood)))
+document.querySelectorAll('#statusQuickChips .status-quick-chip').forEach(btn=>btn.addEventListener('click',()=>postQuickStatus(btn.dataset.statusText,btn.dataset.statusMood,btn)))
+document.querySelectorAll('#partnerReactionRow .status-react-btn').forEach(btn=>btn.addEventListener('click',()=>reactToPartner(btn.dataset.reaction)))
 
 // expose to inline handlers
 window.openPanel=openPanel; window.closePanel=closePanel
@@ -1824,8 +2152,9 @@ async function loadNotes({ background = false } = {}) {
 
     // Background polling may update our cached data, but it must not destroy an
     // in-progress note draft or selected image. User-triggered loads still render.
-    if (background && hasActiveNoteDraft()) return
+    if (background && hasActiveNoteDraft()) { hideSkeleton('skNotes'); return }
     renderNotes()
+    hideSkeleton('skNotes')
 }
 
 // ── MASTER RENDER ──
