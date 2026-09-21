@@ -588,9 +588,10 @@
         .note-kind.gizmo { color: #c4b5fd; background: rgba(var(--accent2-rgb),.09); border-color: rgba(var(--accent2-rgb),.18); }
         .note-kind.google-doc { color: #93c5fd; background: rgba(var(--accent-rgb),.09); border-color: rgba(var(--accent-rgb),.18); }
         .note-kind.image { color: #86efac; background: rgba(74,222,128,.08); border-color: rgba(74,222,128,.18); }
+        .note-kind.pdf { color: #fca5a5; background: rgba(248,113,113,.08); border-color: rgba(248,113,113,.18); }
 
         .note-source-tabs {
-            display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; margin: 2px 0 10px;
+            display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 6px; margin: 2px 0 10px;
         }
         .note-source-btn {
             min-width: 0; padding: 7px 8px; border-radius: 8px; cursor: pointer;
@@ -609,6 +610,11 @@
         .note-upload-preview {
             width: 64px; height: 64px; flex: 0 0 64px; border-radius: 10px; object-fit: cover;
             background: #0f1219; border: 1px solid rgba(255,255,255,.08); display: none;
+        }
+        .note-pdf-preview {
+            width:64px; height:64px; flex:0 0 64px; border-radius:10px;
+            display:grid; place-items:center; font:800 12px 'Syne',sans-serif; letter-spacing:.04em;
+            color:#fca5a5; background:rgba(248,113,113,.08); border:1px solid rgba(248,113,113,.18);
         }
         .note-upload-copy { min-width: 0; flex: 1; }
         .note-file-name { color: #8b91a8; font-size: 10.5px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -2708,10 +2714,10 @@ function noteIcon(type) {
     return {pdf:'📄',word:'📝',image:'🖼️','google-doc':'📘',gizmo:'🧠',link:'🔗'}[type] || '📎'
 }
 function noteKindLabel(type) {
-    return {image:'Picture','google-doc':'Google Doc',gizmo:'Gizmo Flashcards',link:'Link'}[type] || 'Note'
+    return {image:'Picture',pdf:'PDF','google-doc':'Google Doc',gizmo:'Gizmo Flashcards',link:'Link'}[type] || 'Note'
 }
 function noteOpenLabel(type) {
-    return type==='image'?'View':type==='gizmo'?'Study':type==='google-doc'?'Open doc':'Open'
+    return type==='image'?'View':type==='pdf'?'Open PDF':type==='gizmo'?'Study':type==='google-doc'?'Open doc':'Open'
 }
 
 // ── TOP-LEVEL ADD BUTTON ──
@@ -2736,10 +2742,11 @@ function hasActiveNoteDraft() {
     const googleUrl = area.querySelector('#noteGoogleUrl')?.value.trim() || ''
     const gizmoUrl = area.querySelector('#noteGizmoUrl')?.value.trim() || ''
     const otherUrl = area.querySelector('#noteOtherUrl')?.value.trim() || ''
-    const hasFile = !!area.querySelector('#noteImageFile')?.files?.length
+    const hasImageFile = !!area.querySelector('#noteImageFile')?.files?.length
+    const hasPdfFile = !!area.querySelector('#notePdfFile')?.files?.length
     const selectedType = area.querySelector('.note-source-btn.active')?.dataset.noteType || 'google-doc'
 
-    return !!(title || googleUrl || gizmoUrl || otherUrl || hasFile || selectedType !== 'google-doc')
+    return !!(title || googleUrl || gizmoUrl || otherUrl || hasImageFile || hasPdfFile || selectedType !== 'google-doc')
 }
 
 async function loadNotes({ background = false } = {}) {
@@ -2901,7 +2908,8 @@ function showAddNoteForm(lessonId, container) {
 
     const area = document.createElement('div'); area.className='add-note-area'; area.dataset.lessonId=lessonId
     let selectedType = 'google-doc'
-    let selectedFile = null
+    let selectedImageFile = null
+    let selectedPdfFile = null
     let previewUrl = null
 
     area.innerHTML = `
@@ -2911,6 +2919,7 @@ function showAddNoteForm(lessonId, container) {
             <button type="button" class="note-source-btn active" data-note-type="google-doc">Google Docs</button>
             <button type="button" class="note-source-btn" data-note-type="gizmo">Gizmo</button>
             <button type="button" class="note-source-btn" data-note-type="image">Picture</button>
+            <button type="button" class="note-source-btn" data-note-type="pdf">PDF</button>
             <button type="button" class="note-source-btn" data-note-type="link">Other link</button>
         </div>
 
@@ -2932,6 +2941,16 @@ function showAddNoteForm(lessonId, container) {
                 </div>
             </div>
         </div>
+        <div class="note-source-panel" data-panel="pdf">
+            <div class="note-upload-zone">
+                <div class="note-pdf-preview" aria-hidden="true">PDF</div>
+                <div class="note-upload-copy">
+                    <label class="note-upload-btn" for="notePdfFile">Choose PDF</label>
+                    <input class="note-file-input" id="notePdfFile" type="file" accept="application/pdf,.pdf" />
+                    <div class="note-file-name" id="notePdfName">PDF document · max 20 MB</div>
+                </div>
+            </div>
+        </div>
         <div class="note-source-panel" data-panel="link">
             <input class="note-link-input" id="noteOtherUrl" placeholder="https://…" />
             <div class="note-help">Any normal HTTPS web link.</div>
@@ -2947,17 +2966,24 @@ function showAddNoteForm(lessonId, container) {
     }
     area.querySelectorAll('.note-source-btn').forEach(btn=>btn.addEventListener('click',()=>setType(btn.dataset.noteType)))
 
-    const fileInput=area.querySelector('#noteImageFile')
+    const imageInput=area.querySelector('#noteImageFile')
     const preview=area.querySelector('#noteImagePreview')
-    const fileName=area.querySelector('#noteImageName')
-    fileInput.addEventListener('change',()=>{
+    const imageName=area.querySelector('#noteImageName')
+    imageInput.addEventListener('change',()=>{
         if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}
-        selectedFile=fileInput.files?.[0]||null
-        if(!selectedFile){ preview.style.display='none'; fileName.textContent='JPG, PNG, WEBP, HEIC and other browser-supported images · max 8 MB'; return }
-        fileName.textContent=selectedFile.name
-        if(selectedFile.type.startsWith('image/')){
-            previewUrl=URL.createObjectURL(selectedFile); preview.src=previewUrl; preview.style.display='block'
+        selectedImageFile=imageInput.files?.[0]||null
+        if(!selectedImageFile){ preview.style.display='none'; imageName.textContent='JPG, PNG, WEBP, HEIC and other browser-supported images · max 8 MB'; return }
+        imageName.textContent=selectedImageFile.name
+        if(selectedImageFile.type.startsWith('image/')){
+            previewUrl=URL.createObjectURL(selectedImageFile); preview.src=previewUrl; preview.style.display='block'
         }
+    })
+
+    const pdfInput=area.querySelector('#notePdfFile')
+    const pdfName=area.querySelector('#notePdfName')
+    pdfInput.addEventListener('change',()=>{
+        selectedPdfFile=pdfInput.files?.[0]||null
+        pdfName.textContent=selectedPdfFile ? selectedPdfFile.name : 'PDF document · max 20 MB'
     })
 
     area.querySelector('#noteSaveBtn').addEventListener('click', async () => {
@@ -2967,20 +2993,33 @@ function showAddNoteForm(lessonId, container) {
 
         let url=''; let fileType=selectedType; let noteType='link'; let uploadedPath=null
         try{
-            saveBtn.disabled=true; saveBtn.textContent=selectedType==='image'?'Uploading picture…':'Saving…'
+            saveBtn.disabled=true
+            saveBtn.textContent=selectedType==='image'?'Uploading picture…':selectedType==='pdf'?'Uploading PDF…':'Saving…'
 
-            if(selectedType==='image'){
-                if(!selectedFile){ notify('Choose a picture first.','warning'); return }
-                if(!selectedFile.type.startsWith('image/')){ notify('That file is not an image.','warning'); return }
-                if(selectedFile.size>8*1024*1024){ notify('Picture must be 8 MB or smaller.','warning'); return }
-                const ext=(selectedFile.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg'
+            if(selectedType==='image' || selectedType==='pdf'){
+                const selectedFile=selectedType==='image' ? selectedImageFile : selectedPdfFile
+                if(!selectedFile){ notify(selectedType==='image'?'Choose a picture first.':'Choose a PDF first.','warning'); return }
+
+                if(selectedType==='image'){
+                    if(!selectedFile.type.startsWith('image/')){ notify('That file is not an image.','warning'); return }
+                    if(selectedFile.size>8*1024*1024){ notify('Picture must be 8 MB or smaller.','warning'); return }
+                } else {
+                    const isPdf=selectedFile.type==='application/pdf' || selectedFile.name.toLowerCase().endsWith('.pdf')
+                    if(!isPdf){ notify('That file is not a PDF.','warning'); return }
+                    if(selectedFile.size>20*1024*1024){ notify('PDF must be 20 MB or smaller.','warning'); return }
+                }
+
+                const ext=selectedType==='pdf'
+                    ? 'pdf'
+                    : ((selectedFile.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg')
                 const unique=(crypto.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`)
                 uploadedPath=`${user.role}/lesson-${lessonId}/${unique}.${ext}`
-                const {error:uploadError}=await supabase.storage.from('note-images').upload(uploadedPath,selectedFile,{cacheControl:'3600',upsert:false,contentType:selectedFile.type})
-                if(uploadError) throw new Error(`IMAGE_UPLOAD:${uploadError.message}`)
+                const contentType=selectedType==='pdf'?'application/pdf':selectedFile.type
+                const {error:uploadError}=await supabase.storage.from('note-images').upload(uploadedPath,selectedFile,{cacheControl:'3600',upsert:false,contentType})
+                if(uploadError) throw new Error(`${selectedType.toUpperCase()}_UPLOAD:${uploadError.message}`)
                 const {data:publicData}=supabase.storage.from('note-images').getPublicUrl(uploadedPath)
-                url=publicData?.publicUrl||''; fileType='image'; noteType='image'
-                if(!url) throw new Error('IMAGE_URL:Could not create picture URL')
+                url=publicData?.publicUrl||''; fileType=selectedType; noteType=selectedType
+                if(!url) throw new Error(`${selectedType.toUpperCase()}_URL:Could not create file URL`)
             } else {
                 const inputId=selectedType==='google-doc'?'#noteGoogleUrl':selectedType==='gizmo'?'#noteGizmoUrl':'#noteOtherUrl'
                 url=area.querySelector(inputId).value.trim()
@@ -3002,14 +3041,14 @@ function showAddNoteForm(lessonId, container) {
                 console.log(error); notify('Could not save the note.','error'); return
             }
             if(previewUrl)URL.revokeObjectURL(previewUrl)
-            const lessonTitle=Object.values(allLessons).flat().find(l=>String(l.id)===String(lessonId))?.title||'a lesson'
-            notify(selectedType==='image'?'Picture note saved.':selectedType==='gizmo'?'Gizmo flashcards saved.':'Note saved.','success')
+            notify(selectedType==='image'?'Picture note saved.':selectedType==='pdf'?'PDF note saved.':selectedType==='gizmo'?'Gizmo flashcards saved.':'Note saved.','success')
             await loadNotes()
         }catch(err){
             console.error(err)
             if(uploadedPath) await supabase.storage.from('note-images').remove([uploadedPath]).catch(()=>{})
             const msg=String(err?.message||err)
-            if(msg.startsWith('IMAGE_UPLOAD:')) notify('Picture upload is not configured yet. Run the note-images Storage setup SQL first.','error',5200)
+            if(msg.startsWith('IMAGE_UPLOAD:')) notify('Picture upload is not configured yet. Run the note Storage setup SQL first.','error',5200)
+            else if(msg.startsWith('PDF_UPLOAD:')) notify('PDF upload is not enabled yet. Run the PDF Storage patch SQL first.','error',5200)
             else notify('Could not save the note.','error')
         }finally{
             saveBtn.disabled=false; saveBtn.textContent='Save note'
@@ -3122,11 +3161,11 @@ async function deleteNote(id) {
     const note=Object.values(allNotes).flat().find(n=>String(n.id)===String(id))
     const {error}=await supabase.from('notes').delete().eq('id',id)
     if(error){console.log(error);notify('Could not delete the note.','error');return}
-    if(note?.file_type==='image'){
+    if(['image','pdf'].includes(note?.file_type)){
         const path=noteStoragePathFromUrl(note.url)
         if(path){
             const {error:storageError}=await supabase.storage.from('note-images').remove([path])
-            if(storageError)console.warn('Picture cleanup failed:',storageError)
+            if(storageError)console.warn('Note file cleanup failed:',storageError)
         }
     }
     notify('Note deleted.','success'); await loadNotes()
